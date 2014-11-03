@@ -15,7 +15,7 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
-        final ImageView imageView = (ImageView)findViewById(R.id.redBox);
+        final ImageView imageView = (ImageView)findViewById(R.id.redSquare);
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
