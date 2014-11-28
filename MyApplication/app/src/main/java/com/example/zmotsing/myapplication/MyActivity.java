@@ -1,48 +1,29 @@
 package com.example.zmotsing.myapplication;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.opengl.GLSurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
+@TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyActivity extends Activity {
-//    float oldX;
-//    float oldY;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_my);
-//
-//        final ImageView imageView = (ImageView)findViewById(R.id.redSquare);
-//        imageView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        oldX = event.getX();
-//                        oldY = event.getY();
-//                        return true;
-//                    case MotionEvent.ACTION_MOVE:
-//                        imageView.setX(event.getRawX() - oldX);
-//                        imageView.setY(event.getRawY() - oldY);
-//                        return true;
-//                    case MotionEvent.ACTION_UP:
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
-//    }
 
     private GLSurfaceView mGLView;
 
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); // (NEW)
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN); // (NEW)
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
         mGLView = new MyGLSurfaceView(this);
+        //mGLView.setRenderer(new MyGLRenderer());
         setContentView(mGLView);
     }
 }

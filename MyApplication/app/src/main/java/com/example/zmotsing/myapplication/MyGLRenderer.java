@@ -1,14 +1,12 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
-import android.opengl.EGLConfig;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 import android.os.Build;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -18,7 +16,6 @@ import javax.microedition.khronos.opengles.GL10;
  */
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyGLRenderer implements GLSurfaceView.Renderer {
-    private FloatBuffer triangleVB;
 
     private final String vertexShaderCode = "attribute vec4 vPosition; \n"
             + "void main(){              \n" + " gl_Position = vPosition; \n"
@@ -32,59 +29,81 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private int mProgram;
     private int maPositionHandle;
 
-    private int loadShader(int type, String shaderCode) {
 
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
-        int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-
-        return shader;
-    }
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
+         * microedition.khronos.opengles.GL10)
+     */
+// Initialize our square.
+    LineStrip linestrip;
+    List<Coord> controlPoints = new ArrayList<>();
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        // Clears the screen and depth buffer.
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | //
+                GL10.GL_DEPTH_BUFFER_BIT);
 
-        GLES20.glUseProgram(mProgram);
-
-        GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT,
-                false, 12, triangleVB);
-        GLES20.glEnableVertexAttribArray(maPositionHandle);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
+        // Draw our square.
+        // Translates 4 units into the screen.
+        gl.glTranslatef(0, 0, -4);
+        linestrip.draw(gl); // ( NEW )
+        // Replace the current matrix with the identity matrix
+        gl.glLoadIdentity();
     }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.
+         * microedition.khronos.opengles.GL10, int, int)
+     */
 
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        GLES20.glViewport(0, 0, width, height);
+        // Sets the current view port to the new size.
+        gl.glViewport(0, 0, width, height);
+        // Select the projection matrix
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        // Reset the projection matrix
+        gl.glLoadIdentity();
+        // Calculate the aspect ratio of the window
+        GLU.gluPerspective(gl, 45.0f,
+                (float) width / (float) height,
+                0.1f, 100.0f);
+        // Select the modelview matrix
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        // Reset the modelview matrix
+        gl.glLoadIdentity();
     }
-
     @Override
-    public void onSurfaceCreated(GL10 gl10, javax.microedition.khronos.egl.EGLConfig eglConfig) {
-        gl10.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-        initShapes();
-        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-        mProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(mProgram, vertexShader);
-        GLES20.glAttachShader(mProgram, fragmentShader);
-        GLES20.glLinkProgram(mProgram);
+    public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
+        // Set the background color to black ( rgba ).
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+        // Enable Smooth Shading, default not really needed.
+        gl.glShadeModel(GL10.GL_SMOOTH);
+        // Depth buffer setup.
+        gl.glClearDepthf(1.0f);
+        // Enables depth testing.
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+        // The type of depth testing to do.
+        gl.glDepthFunc(GL10.GL_LEQUAL);
+        // Really nice perspective calculations.
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+                GL10.GL_NICEST);
 
-        maPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+
+        controlPoints.add(new Coord(-0.6f,  0.6f));
+        controlPoints.add(new Coord(-0.6f,  -0.6f));
+        controlPoints.add(new Coord(0.6f,  -0.6f));
+        controlPoints.add(new Coord(0.6f,  0.6f));
+        controlPoints.add(new Coord(0.6f,  1f));
+        controlPoints.add(new Coord(0.2f,  -1f));
+        linestrip = new LineStrip(Spline.interpolate(controlPoints,60,CatmullRomType.Chordal));
     }
 
-    private void initShapes() {
-        float[] triangleCoords = new float[]{
-                // X,Y,Z
-                -0.5f, -0.25f, 0, 0.5f, -0.25f, 0, 0.0f, 0.559016994f, 0};
-        ByteBuffer vbb = ByteBuffer.allocateDirect(triangleCoords.length * 4);
-        vbb.order(ByteOrder.nativeOrder());
-        triangleVB = vbb.asFloatBuffer();
-        triangleVB.put(triangleCoords);
-        triangleVB.position(0);
-    }
 }
