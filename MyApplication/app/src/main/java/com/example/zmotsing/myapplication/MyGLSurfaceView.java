@@ -2,6 +2,8 @@ package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.view.MotionEvent;
@@ -17,11 +19,13 @@ class MyGLSurfaceView extends GLSurfaceView {
     MyGLRenderer r = new MyGLRenderer();
     public MyGLSurfaceView(Context context){
         super(context);
+        r.setContext(context);
 
         // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(1);
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(r);
+
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }

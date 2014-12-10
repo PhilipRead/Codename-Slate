@@ -82,6 +82,8 @@ public class LineStrip {
      * @param gl
      */
     public void draw(GL10 gl) {
+
+        gl.glDisable(GL10.GL_TEXTURE_2D);
         // Counter-clockwise winding.
         gl.glFrontFace(GL10.GL_CCW);
         // Enable face culling.
@@ -94,6 +96,8 @@ public class LineStrip {
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         // Specifies the location and data format of an array of vertex
         // coordinates to use when rendering.
+        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0,
                 vertexBuffer);
 

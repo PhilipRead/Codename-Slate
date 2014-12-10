@@ -3,6 +3,8 @@ package com.example.zmotsing.myapplication;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.opengl.GLSurfaceView;
@@ -25,9 +27,13 @@ public class MyActivity extends Activity {
 
     private GLSurfaceView mGLView;
 
+    //load bitmap
+
+
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // (NEW)
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

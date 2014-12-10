@@ -1,17 +1,18 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
-import android.graphics.Camera;
+import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.opengl.Matrix;
 import android.os.Build;
-import android.util.Log;
-import javax.microedition.khronos.opengles.GL10;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.example.zmotsing.myapplication.Nodes.OutputNode;
 
 import javax.microedition.khronos.opengles.GL10;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -20,42 +21,56 @@ import javax.microedition.khronos.opengles.GL10;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
+    private Sprite 		square;		// the square
 
-    /**
-     * Keeps track of the Projection matrix calculated on the last draw frame
-     */
-    private float[] lastProjectionMat = null;
+    private int[] Textures = new int[1]; //textures pointers
+    private int  activeTexture = 0; //which texture is active (by index)
 
-    /**
-     * Keeps track of the model view matrix calculated on the last frame
-     */
-    private float[] lastModelViewMat = null;
+    private static Context myContext;
+    /** Constructor to set the handed over context */
+    public MyGLRenderer() {
+        this.square		= new Sprite(R.drawable.android,0,0);
 
+    }
 
-    private final String vertexShaderCode = "attribute vec4 vPosition; \n"
-            + "void main(){              \n" + " gl_Position = vPosition; \n"
-            + "}                         \n";
-
-    private final String fragmentShaderCode = "precision mediump float;  \n"
-            + "void main(){              \n"
-            + " gl_FragColor = vec4 (0.63671875, 0.76953125, 0.22265625, 1.0); \n"
-            + "}                         \n";
-
-    private int mProgram;
-    private int maPositionHandle;
 
     static LineStrip linestrip;
-    static List<Coord> controlPoints = new ArrayList<>();
+    static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
+    static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
+
 
     @Override
     public void onDrawFrame(GL10 gl) {
+
+
+        Iterator<Node> itrl = NodesToLoad.iterator();
+        while(itrl.hasNext()) {
+            Node element = itrl.next();
+            element.spr.loadGLTexture(gl, myContext);
+        }
+        NodesToLoad.clear();
+
+
         // Clears the screen and depth buffer.
+
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | //
                 GL10.GL_DEPTH_BUFFER_BIT);
 
         // Draw our square.
         // Translates 4 units into the screen.
         gl.glTranslatef(0, 0, -4);
+//        square.draw(gl);
+
+
+
+        Iterator<Node> itr = NodeList.iterator();
+        while(itr.hasNext())
+        {
+            Node element = itr.next();
+            element.spr.draw(gl);
+        }
+        //NodeList.get(0).spr.draw(gl);
         if(linestrip != null) {
             linestrip.draw(gl); // ( NEW )
 
@@ -63,15 +78,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.
-         * microedition.khronos.opengles.GL10, int, int)
-     */
-
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         // Sets the current view port to the new size.
@@ -92,33 +98,49 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
-        // Set the background color to black ( rgba ).
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
-        // Enable Smooth Shading, default not really needed.
-        gl.glShadeModel(GL10.GL_SMOOTH);
-        // Depth buffer setup.
-        gl.glClearDepthf(1.0f);
-        // Enables depth testing.
-        gl.glEnable(GL10.GL_DEPTH_TEST);
-        // The type of depth testing to do.
-        gl.glDepthFunc(GL10.GL_LEQUAL);
-        // Really nice perspective calculations.
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-                GL10.GL_NICEST);
 
+        NodeList.add(new OutputNode(new Coord(-0.6f,  -0.6f)));
+        NodeList.add(new OutputNode(new Coord(0.6f,  -0.6f)));
+        NodeList.add(new OutputNode(new Coord(0.6f,  0.6f)));
+        NodeList.add(new OutputNode(new Coord(0.6f, 1f)));
+        NodeList.add(new OutputNode(new Coord(0.2f,  -1f)));
 
-        this.lastProjectionMat = new float[16];
-        this.lastModelViewMat = new float[16];
-        controlPoints.add(new Coord(-0.6f,  -0.6f));
-        controlPoints.add(new Coord(0.6f,  -0.6f));
-        controlPoints.add(new Coord(0.6f,  0.6f));
-        controlPoints.add(new Coord(0.6f,  1f));
-        controlPoints.add(new Coord(0.2f,  -1f));
+        //nody = new NodeSprite();
+        for(Node c : NodeList)
+        {
+            c.spr.loadGLTexture(gl, myContext);
+        }
+        //square.loadGLTexture(gl, myContext);
+
+        gl.glEnable(GL10.GL_TEXTURE_2D);			//Enable Texture Mapping
+        gl.glShadeModel(GL10.GL_SMOOTH); 			//Enable Smooth Shading
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 	//Black Background
+        gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
+        gl.glEnable(GL10.GL_DEPTH_TEST); 			//Enables Depth Testing
+        gl.glDepthFunc(GL10.GL_LEQUAL); 			//The Type Of Depth Testing To Do
+
+        //Really Nice Perspective Calculations
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+
+        //this.lastProjectionMat = new float[16];
+        //this.lastModelViewMat = new float[16];
+
+        for(Node c : NodeList)
+        {
+            controlPoints.add(c.getCoord());
+        }
+
         linestrip = new LineStrip(Spline.interpolate(controlPoints,60,CatmullRomType.Chordal));
     }
+
     public static void addControlPoints(float x, float y)
     {
+
+        Node n = new OutputNode(new Coord(x,y));
+        NodeList.add(n);
         controlPoints.add(new Coord(x,y));
+        NodesToLoad.add(n);
+        //NodeList.get(NodeList.size()).spr.loadGLTexture(gl, myContext);
         if(controlPoints.size() > 2) {
             linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
         }
@@ -148,5 +170,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         worldPos = new Coord(glWidth, glHeight);
 
         return worldPos;
+    }
+
+
+    public void setContext(Context context) {
+        myContext = context;
     }
 }

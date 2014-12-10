@@ -3,10 +3,29 @@ package com.example.zmotsing.myapplication;
 /**
  * Created by DreyCow on 11/25/2014.
  */
-public interface Node {
+public abstract class Node {
 
-    public void action();
-    public Coord getCoord();
-    public void setCoord(Coord c);
-    public String getTitle();
+    protected Coord co;
+
+    public Node(Coord c)
+    {
+        co = c;
+    }
+
+
+
+    public Coord getCoord()
+    {
+        return co;
+    }
+    public void setCoord(Coord c)
+    {
+        co = c;
+    }
+
+    abstract public void action();
+    public Sprite spr;
+    abstract public int getTextureIndex();
+
+    abstract public String getTitle();
 }
