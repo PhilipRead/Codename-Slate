@@ -81,7 +81,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         // Sets the current view port to the new size.
-        gl.glViewport(0, 0, width, height);
+        gl.glViewport(width/3, 0, ((2*width)/3), height);  //right 2/3rds of the screen
         // Select the projection matrix
         gl.glMatrixMode(GL10.GL_PROJECTION);
         // Reset the projection matrix
@@ -161,10 +161,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // SCREEN height & width (ej: 320 x 480)
         float screenW = MyActivity.width;
         float screenH = MyActivity.height;
+
+        screenW = (screenW*2)/3;
+
         float oglTouchY = screenH - touch.Y;
+        //float oglTouchX = touch.X - screenW * .333f;
 
        /* Transform the screen point to clip space in ogl (-1,1) */
-        float glWidth = (float) ((touch.X) * 6f / screenW - 3);
+        float glWidth = (float) ((touch.X) * 6f / screenW - 6);
         float glHeight = (float) ((oglTouchY) * 3.2f / screenH -1.5);
 
         worldPos = new Coord(glWidth, glHeight);

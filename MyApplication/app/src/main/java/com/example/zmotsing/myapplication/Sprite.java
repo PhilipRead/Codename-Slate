@@ -18,7 +18,7 @@ public class Sprite {
     private int resID;                  //the id of the resource bitmap
     private FloatBuffer vertexBuffer;	// buffer holding the vertices
     private float width = 0.2f;
-    private float height = 0.2f;
+    private float height = 0.1333f;
     public float X = 1.5f;
     public float Y = 0.2f;
     private float vertices[] = {
@@ -71,7 +71,7 @@ public class Sprite {
         gl.glEnable (GL10.GL_BLEND);
         gl.glBlendFunc (GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         // Point to our buffers
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
