@@ -43,9 +43,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
     public static LineStrip linestrip;
-    static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
+    static CopyOnWriteArrayList<TextObject> TextList = new CopyOnWriteArrayList<>();
+
+
+    static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
+
 
 
     @Override
@@ -82,6 +86,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             linestrip.draw(gl); // ( NEW )
 
         }
+
+        Iterator<TextObject> itrText = TextList.iterator();
+        while(itrText.hasNext())
+        {
+            TextObject element = itrText.next();
+            element.spr.draw(gl);
+        }
+
         Tn.spr.draw(gl);
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
@@ -113,9 +125,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodeList.add(new OutputNode(new Coord(0.6f, 1f)));
         NodeList.add(new OutputNode(new Coord(0.2f,  -1f)));
         Tn = new TravelingNode(new Coord(-0.6f,  -0.6f));
+        TextList.add(new TextObject(new Coord( -0.6f, -0.6f), 'A'));
 
         //nody = new NodeSprite();
         for(Node c : NodeList)
+        {
+            c.spr.loadGLTexture(gl, myContext);
+        }
+        for(TextObject c : TextList)
         {
             c.spr.loadGLTexture(gl, myContext);
         }
