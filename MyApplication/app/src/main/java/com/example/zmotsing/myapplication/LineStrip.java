@@ -14,7 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class LineStrip {
 
     // Our vertices.
-    private float vertices[] = {
+    public float vertices[] = {
             -1.0f,  1.0f, 0.0f,  // 0, Top Left
             -1.0f, -1.0f, 0.0f,  // 1, Bottom Left
             1.0f, -1.0f, 0.0f,  // 2, Bottom Right

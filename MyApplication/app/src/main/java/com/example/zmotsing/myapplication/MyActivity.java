@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.opengl.GLSurfaceView;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +30,9 @@ public class MyActivity extends Activity {
 
     //load bitmap
 
+    int i=0;
+    //TextView tv;
+    final Handler myHandler = new Handler();
 
     @TargetApi(Build.VERSION_CODES.CUPCAKE)
     @Override
@@ -50,6 +54,24 @@ public class MyActivity extends Activity {
         //mGLView.setRenderer(new MyGLRenderer());
 
         setContentView(mGLView);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 

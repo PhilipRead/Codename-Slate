@@ -5,13 +5,17 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Build;
+import android.os.Handler;
 
 import com.example.zmotsing.myapplication.Nodes.OutputNode;
+import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
 import javax.microedition.khronos.opengles.GL10;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -26,7 +30,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private int[] Textures = new int[1]; //textures pointers
     private int  activeTexture = 0; //which texture is active (by index)
 
+    int i=0;
+    final Handler myHandler = new Handler();
     private static Context myContext;
+    private TravelingNode Tn;
+
     /** Constructor to set the handed over context */
     public MyGLRenderer() {
         this.square		= new Sprite(R.drawable.android,0,0);
@@ -34,7 +42,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
 
-    static LineStrip linestrip;
+    public static LineStrip linestrip;
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
@@ -42,7 +50,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-
 
         Iterator<Node> itrl = NodesToLoad.iterator();
         while(itrl.hasNext()) {
@@ -75,6 +82,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             linestrip.draw(gl); // ( NEW )
 
         }
+        Tn.spr.draw(gl);
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
     }
@@ -104,12 +112,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodeList.add(new OutputNode(new Coord(0.6f,  0.6f)));
         NodeList.add(new OutputNode(new Coord(0.6f, 1f)));
         NodeList.add(new OutputNode(new Coord(0.2f,  -1f)));
+        Tn = new TravelingNode(new Coord(-0.6f,  -0.6f));
 
         //nody = new NodeSprite();
         for(Node c : NodeList)
         {
             c.spr.loadGLTexture(gl, myContext);
         }
+
+        Tn.spr.loadGLTexture(gl, myContext);
         //square.loadGLTexture(gl, myContext);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);			//Enable Texture Mapping
@@ -131,7 +142,27 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         linestrip = new LineStrip(Spline.interpolate(controlPoints,60,CatmullRomType.Chordal));
+
+
+        Timer myTimer = new Timer();
+        myTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {AdvanceTravelingNode();}
+        }, 0, 10);
     }
+
+
+    private void AdvanceTravelingNode() {
+        i++;
+        //tv.setText(String.valueOf(i));
+        myHandler.post(myRunnable);
+    }
+
+    final Runnable myRunnable = new Runnable() {
+        public void run() {
+            Tn.action();
+        }
+    };
 
     public static void addControlPoints(float x, float y)
     {

@@ -39,6 +39,25 @@ public class Sprite {
 
 
     public Sprite(int resourceID, float x,float y) {
+        SetupSprite(resourceID,x,y);
+    }
+
+    public Sprite(int resourceID, float x,float y,float w, float h) {
+        width = w;
+        height = h;
+        SetupSprite(resourceID,x,y);
+    }
+
+    public Sprite(int resourceID, float x,float y,float w, float h, float textureMap[]) {
+        width = w;
+        height = h;
+        texture = textureMap;
+        SetupSprite(resourceID,x,y);
+    }
+
+    public void SetupSprite(int resourceID, float x,float y)
+    {
+
         resID = resourceID;
         X = x;
         Y = y;
@@ -57,9 +76,6 @@ public class Sprite {
         textureBuffer = byteBuffer.asFloatBuffer();
         textureBuffer.put(texture);
         textureBuffer.position(0);
-
-
-
     }
 
     /** The draw method for the square with the GL context */

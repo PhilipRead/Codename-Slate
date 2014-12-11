@@ -10,9 +10,11 @@ import com.example.zmotsing.myapplication.Sprite;
  */
 public class OutputNode extends Node {
 
+    int currentNodeIndex;
     public OutputNode(Coord c) {
         super(c);
-        spr = new Sprite(R.drawable.android,c.X,c.Y);
+        spr = new Sprite(R.drawable.outputnode,c.X,c.Y);
+        currentNodeIndex = 0;
     }
 
     @Override
