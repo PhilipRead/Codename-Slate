@@ -44,7 +44,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static LineStrip linestrip;
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
-    static CopyOnWriteArrayList<TextObject> TextList = new CopyOnWriteArrayList<>();
+    public static TextManager textMngr = new TextManager(-0.8f, 0.0f, 1.2f, 0.0f);
 
 
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
@@ -87,7 +87,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         }
 
-        Iterator<TextObject> itrText = TextList.iterator();
+        Iterator<TextObject> itrText = textMngr.getTextList().iterator();
         while(itrText.hasNext())
         {
             TextObject element = itrText.next();
@@ -125,14 +125,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodeList.add(new OutputNode(new Coord(0.6f, 1f)));
         NodeList.add(new OutputNode(new Coord(0.2f,  -1f)));
         Tn = new TravelingNode(new Coord(-0.6f,  -0.6f));
-        TextList.add(new TextObject(new Coord( -0.6f, -0.6f), 'A'));
+        textMngr.addText("ABORS");
 
         //nody = new NodeSprite();
         for(Node c : NodeList)
         {
             c.spr.loadGLTexture(gl, myContext);
         }
-        for(TextObject c : TextList)
+        for(TextObject c : textMngr.getTextList())
         {
             c.spr.loadGLTexture(gl, myContext);
         }
