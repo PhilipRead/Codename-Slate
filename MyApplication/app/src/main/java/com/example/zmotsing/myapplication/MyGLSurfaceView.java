@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 
 import static com.example.zmotsing.myapplication.MyGLRenderer.addControlPoints;
 
@@ -16,20 +18,25 @@ import static com.example.zmotsing.myapplication.MyGLRenderer.addControlPoints;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 class MyGLSurfaceView extends GLSurfaceView {
 
+    Context mycontext;
     MyGLRenderer r = new MyGLRenderer();
-    public MyGLSurfaceView(Context context){
+    public MyGLSurfaceView(Context context)
+    {
         super(context);
         r.setContext(context);
-
+        this.setFocusable(true);
+        this.setFocusableInTouchMode(true);
         // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(1);
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(r);
+        mycontext = context;
 
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-    @Override public boolean onTouchEvent(MotionEvent e) {
+    @Override public boolean onTouchEvent(MotionEvent e)
+    {
         Coord c =  r.GetWorldCoords(new Coord(e.getX(),e.getY()));
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
@@ -44,6 +51,42 @@ class MyGLSurfaceView extends GLSurfaceView {
                 //oldY = event.getY();
                 return true;
         }
+        boolean keyboardevent = true;
+
+
+        if(keyboardevent)
+        {
+            ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, 0);
+        }
         return true;
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent msg)
+    {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            return true;
+        }
+
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
+        }
+
+        return false;
+    }
+
+
+
 }

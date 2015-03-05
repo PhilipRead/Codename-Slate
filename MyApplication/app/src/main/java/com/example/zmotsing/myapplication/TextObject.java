@@ -46,7 +46,7 @@ public class TextObject {
     }
 
     public TextObject(Coord _c, char _letter) {
-        spr = new Sprite(letterTextures.get(_letter),_c.X,_c.Y);
+        spr = new Sprite(letterTextures.get(_letter),_c.X,_c.Y,0.02f,0.01333f);
         c = _c;
         letter = _letter;
     }

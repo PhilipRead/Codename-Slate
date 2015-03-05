@@ -4,9 +4,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.opengl.Matrix;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Button;
 
+import com.example.zmotsing.myapplication.Buttons.IfButton;
+import com.example.zmotsing.myapplication.Buttons.InputButton;
+import com.example.zmotsing.myapplication.Buttons.OutputButton;
 import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
@@ -22,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by acowdrey on 11/12/14.
  */
+
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
@@ -42,9 +49,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
 
+    public static int viewp_w;
+    public static int viewp_h;
+    public static GL10 glvar;
     public static LineStrip linestrip;
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
-    public static TextManager textMngr = new TextManager(-0.8f, 0.0f, 1.2f, 0.0f);
+    static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
+    public static TextManager textMngr = new TextManager(0.0f, 0.0f, 0.0f, 0.0f);
 
 
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
@@ -54,6 +65,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         Iterator<Node> itrl = NodesToLoad.iterator();
         while(itrl.hasNext()) {
@@ -70,10 +94,25 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Draw our square.
         // Translates 4 units into the screen.
-        gl.glTranslatef(0, 0, -4);
 //        square.draw(gl);
 
+        gl.glTranslatef(0, 0, -4);
 
+
+
+        Iterator<TextObject> itrText = textMngr.getTextList().iterator();
+        while(itrText.hasNext())
+        {
+            TextObject element = itrText.next();
+            element.spr.draw(gl);
+        }
+
+        Iterator<Node> itrb = ButtonList.iterator();
+        while(itrb.hasNext())
+        {
+            Node element = itrb.next();
+            element.spr.draw(gl);
+        }
 
         Iterator<Node> itr = NodeList.iterator();
         while(itr.hasNext())
@@ -86,14 +125,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             linestrip.draw(gl); // ( NEW )
 
         }
-
-        Iterator<TextObject> itrText = textMngr.getTextList().iterator();
-        while(itrText.hasNext())
-        {
-            TextObject element = itrText.next();
-            element.spr.draw(gl);
-        }
-
         Tn.spr.draw(gl);
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
@@ -101,7 +132,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         // Sets the current view port to the new size.
-        gl.glViewport(width/3, 0, ((2*width)/3), height);  //right 2/3rds of the screen
+
+
+       // gl.glViewport(width/3, 0, ((2*width)/3), height);  //right 2/3rds of the screen
+
+        gl.glViewport(0, 0, width, height);  //WHOLE SCREEN
+        viewp_w = width;
+        viewp_w = height;
+        glvar = gl;
+
         // Select the projection matrix
         gl.glMatrixMode(GL10.GL_PROJECTION);
         // Reset the projection matrix
@@ -119,12 +158,20 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
+
         NodeList.add(new OutputNode(new Coord(-0.6f,  -0.6f)));
         NodeList.add(new OutputNode(new Coord(0.6f,  -0.6f)));
         NodeList.add(new OutputNode(new Coord(0.6f,  0.6f)));
         NodeList.add(new OutputNode(new Coord(0.6f, 1f)));
         NodeList.add(new OutputNode(new Coord(0.2f,  -1f)));
         Tn = new TravelingNode(new Coord(-0.6f,  -0.6f));
+        float bs = 1.61f; // buttonspacing
+
+        ButtonList.add(new OutputButton(new Coord(-2.1f,  1.5f)));
+        ButtonList.add(new InputButton(new Coord(-.49f,  1.5f)));
+        ButtonList.add(new IfButton(new Coord(1.12f,  1.5f)));
+
+
         textMngr.addText("ABORS");
 
         //nody = new NodeSprite();
@@ -133,6 +180,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             c.spr.loadGLTexture(gl, myContext);
         }
         for(TextObject c : textMngr.getTextList())
+        {
+            c.spr.loadGLTexture(gl, myContext);
+        }
+        for(Node c : ButtonList)
         {
             c.spr.loadGLTexture(gl, myContext);
         }
@@ -162,10 +213,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         Timer myTimer = new Timer();
-        myTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {AdvanceTravelingNode();}
-        }, 0, 10);
+
+//        myTimer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {AdvanceTravelingNode();}
+//        }, 0, 10);
+
+
     }
 
 
@@ -183,6 +237,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static void addControlPoints(float x, float y)
     {
+
 
         Node n = new OutputNode(new Coord(x,y));
         NodeList.add(n);
@@ -205,6 +260,80 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public Coord GetWorldCoords(Coord touch)
     {
         Coord worldPos;
+        //return touch;
+// Initialize auxiliary variables.
+       // Coord worldPos;// = new Coord();
+
+        // SCREEN height & width (ej: 320 x 480)
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+//        float screenW = viewp_w;
+//        float screenH = viewp_h;
+//
+//        // Auxiliary matrix and vectors
+//        // to deal with ogl.
+//        glvar.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+//        glvar.glMatrixMode(GL10.GL_MODELVIEW);
+//        glvar.glLoadIdentity();                    //Reset The Current Modelview Matrix
+//
+//        float[] mModelView = new float[16];
+//        mModelView = getCurrentModelView(glvar);
+//        glvar.glMatrixMode(GL10.GL_PROJECTION);
+//        float[] mProjection = new float[16];
+//        mProjection = getCurrentProjection(glvar);
+//        float[] invertedMatrix, transformMatrix,
+//                normalizedInPoint, outPoint;
+//        invertedMatrix = new float[16];
+//        transformMatrix = new float[16];
+//        normalizedInPoint = new float[4];
+//        outPoint = new float[4];
+//
+//        // Invert y coordinate, as android uses
+//        // top-left, and ogl bottom-left.
+//        int oglTouchY = (int) (screenH - touch.Y);
+//
+//       /* Transform the screen point to clip
+//       space in ogl (-1,1) */
+//        normalizedInPoint[0] =
+//                (float) ((touch.X) * 2.0f / screenW - 1.0);
+//        normalizedInPoint[1] =
+//                (float) ((oglTouchY) * 2.0f / screenH - 1.0);
+//        normalizedInPoint[2] = - 1.0f;
+//        normalizedInPoint[3] = 1.0f;
+//
+//       /* Obtain the transform matrix and
+//       then the inverse. */
+//        //Print("Proj", getCurrentProjection(gl));
+//        //Print("Model", getCurrentModelView(gl));
+//        Matrix.multiplyMM(
+//                transformMatrix, 0,
+//                mProjection, 0,
+//                mModelView, 0);
+//        Matrix.invertM(invertedMatrix, 0,
+//                transformMatrix, 0);
+//
+//       /* Apply the inverse to the point
+//       in clip space */
+//        Matrix.multiplyMV(
+//                outPoint, 0,
+//                invertedMatrix, 0,
+//                normalizedInPoint, 0);
+//
+//        if (outPoint[3] == 0.0)
+//        {
+//            // Avoid /0 error.
+//            Log.e("World coords", "ERROR!");
+//            return null;
+//        }
+//
+//        // Divide by the 3rd component to find
+//        // out the real position.
+//        worldPos= new Coord(
+//                outPoint[0] / outPoint[3],
+//                outPoint[1] / outPoint[3]);
+//
+//        return worldPos;
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         // SCREEN height & width (ej: 320 x 480)
         float screenW = MyActivity.width;
@@ -223,7 +352,25 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         return worldPos;
     }
+    public float[] getCurrentProjection(GL10 gl)
+    {
+        float[] mProjection = new float[16];
+        getMatrix(gl, GL10.GL_PROJECTION, mProjection);
+        return mProjection;
+    }
 
+    public float[] getCurrentModelView(GL10 gl)
+    {
+        float[] mModelView = new float[16];
+        getMatrix(gl, GL10.GL_MODELVIEW, mModelView);
+        return mModelView;
+    }
+    private void getMatrix(GL10 gl, int mode, float[] mat)
+    {
+        MatrixTrackingGL gl2 = (MatrixTrackingGL) gl;
+        gl2.glMatrixMode(mode);
+        gl2.getMatrix(mat, 0);
+    }
 
     public void setContext(Context context) {
         myContext = context;

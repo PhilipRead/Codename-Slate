@@ -56,22 +56,6 @@ public class MyActivity extends Activity {
         setContentView(mGLView);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 
