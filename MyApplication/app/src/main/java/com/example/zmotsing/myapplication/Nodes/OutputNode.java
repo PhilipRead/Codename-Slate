@@ -28,10 +28,7 @@ public class OutputNode extends Node {
     @Override
     protected void setSprite() {
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
-        LBound = co.X - (Width * .5f);
-        RBound = co.X + (Width * .5f);
-        UBound = co.Y + (Height * .5f);
-        DBound = co.Y - (Width * .5f);
+        setBounds();
     }
 
 

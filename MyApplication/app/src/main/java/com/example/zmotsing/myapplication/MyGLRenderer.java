@@ -124,21 +124,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glTranslatef(transX, transY, transZ);
 
 
-        Iterator<TextObject> itrText = textMngr.getTextList().iterator();
-        while (itrText.hasNext()) {
-            TextObject element = itrText.next();
+        for (TextObject element : textMngr.getTextList()) {
             element.spr.draw(gl);
         }
 
-        Iterator<Node> itrb = ButtonList.iterator();
-        while (itrb.hasNext()) {
-            Node element = itrb.next();
+        for (Node element : ButtonList) {
             element.spr.draw(gl);
         }
 
-        Iterator<Node> itr = NodeList.iterator();
-        while (itr.hasNext()) {
-            Node element = itr.next();
+        for (Node element : NodeList) {
             element.spr.draw(gl);
         }
         //NodeList.get(0).spr.draw(gl);
@@ -187,9 +181,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 //        ButtonList.add(new OutputButton(new Coord(-2.1f, 1.5f)));
 //        ButtonList.add(new InputButton(new Coord(-.49f, 1.5f)));
 //        ButtonList.add(new IfButton(new Coord(1.12f, 1.5f)));
-        NodesToLoad.add(new OutputButton(new Coord(200f, 0f)));
-        NodesToLoad.add(new InputButton(new Coord(200f, 50f)));
-        NodesToLoad.add(new IfButton(new Coord(200f, 200f)));
+        NodesToLoad.add(new OutputButton(new Coord(400f, 100f)));
+        NodesToLoad.add(new InputButton(new Coord(400f, 200f)));
+        NodesToLoad.add(new IfButton(new Coord(400f, 300f)));
 
         textMngr.addText("TEXTTEST");
 
@@ -304,7 +298,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         for (int j = NodeList.size() - 1; j >= 0; j--) {
             Node c = NodeList.get(j);
             if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
-                Log.w("Button dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().X + ")" + "     width: " + c.Width + "    height: " + c.Height);
+                Log.w("Button dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
                 Log.w("Button TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
                 break;
             }

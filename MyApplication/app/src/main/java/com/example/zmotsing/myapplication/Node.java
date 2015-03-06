@@ -18,6 +18,13 @@ public abstract class Node {
 
     }
 
+    public  void setBounds()
+    {
+        LBound = co.X - Width;
+        RBound = co.X + Width;
+        UBound = co.Y + Height;
+        DBound = co.Y - Height;
+    }
 
     public Coord getCoord() {
         return co;

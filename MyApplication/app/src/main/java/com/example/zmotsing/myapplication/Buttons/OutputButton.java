@@ -31,13 +31,8 @@ public class OutputButton extends Node {
     @Override
     protected void setSprite() {
         //Coord
-        spr = new Sprite(drawableInt, co.X, co.Y, 0.8f, 0.2f);
-        LBound = co.X - (Width * .5f);
-        RBound = co.X + (Width * .5f);
-        UBound = co.Y + (Height * .5f);
-        DBound = co.Y - (Width * .5f);
-
-
+        spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        setBounds();
     }
 
     @Override
