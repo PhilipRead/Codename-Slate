@@ -2,21 +2,13 @@ package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
-import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-
-import static com.example.zmotsing.myapplication.MyGLRenderer.addControlPoints;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyActivity extends Activity {
@@ -30,7 +22,7 @@ public class MyActivity extends Activity {
 
     //load bitmap
 
-    int i=0;
+    int i = 0;
     //TextView tv;
     final Handler myHandler = new Handler();
 

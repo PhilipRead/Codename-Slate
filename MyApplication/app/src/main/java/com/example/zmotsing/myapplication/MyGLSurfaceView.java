@@ -2,32 +2,33 @@ package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
-import static com.example.zmotsing.myapplication.MyGLRenderer.addControlPoints;
+import static com.example.zmotsing.myapplication.MyGLRenderer.TouchEventCoord;
+import static com.example.zmotsing.myapplication.MyGLRenderer.Touched;
+import static com.example.zmotsing.myapplication.MyGLRenderer.translateZ;
 
 /**
  * Created by acowdrey on 11/12/14.
  */
+
 @TargetApi(Build.VERSION_CODES.KITKAT)
 class MyGLSurfaceView extends GLSurfaceView {
 
     Context mycontext;
     MyGLRenderer r = new MyGLRenderer();
-    public MyGLSurfaceView(Context context)
-    {
+
+    public MyGLSurfaceView(Context context) {
         super(context);
         r.setContext(context);
         this.setFocusable(true);
         this.setFocusableInTouchMode(true);
         // Create an OpenGL ES 2.0 context
-        setEGLContextClientVersion(1);
+        setEGLContextClientVersion(11);
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(r);
         mycontext = context;
@@ -35,35 +36,30 @@ class MyGLSurfaceView extends GLSurfaceView {
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-    @Override public boolean onTouchEvent(MotionEvent e)
-    {
-        Coord c =  r.GetWorldCoords(new Coord(e.getX(),e.getY()));
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        Coord c = new Coord(e.getX(), e.getY());
+        TouchEventCoord = c;
+        Touched = true;
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
-//                float dx = x - mPreviousX;
-//                float dy = y - mPreviousY;
-//                mRenderer.mAngleX += dx * TOUCH_SCALE_FACTOR;
-//                mRenderer.mAngleY += dy * TOUCH_SCALE_FACTOR;
-//                requestRender();
             case MotionEvent.ACTION_DOWN:
-                addControlPoints(c.X,c.Y);
-                //oldX = event.getX()
-                //oldY = event.getY();
+                //addControlPoints(c.X, c.Y);
+
                 return true;
         }
         boolean keyboardevent = true;
 
-
-        if(keyboardevent)
-        {
-            ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, 0);
+        if (keyboardevent) {
+            //((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, 0);
         }
         return true;
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent msg)
-    {
+    public boolean onKeyDown(int keyCode, KeyEvent msg) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             return true;
         }
@@ -72,7 +68,6 @@ class MyGLSurfaceView extends GLSurfaceView {
             return true;
         }
 
-
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
             return true;
         }
@@ -80,13 +75,22 @@ class MyGLSurfaceView extends GLSurfaceView {
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
             return true;
         }
+
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
         }
 
+        if (keyCode == KeyEvent.KEYCODE_U) {
+            translateZ(-1);
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_D) {
+
+            translateZ(1);
+        }
+
         return false;
     }
-
 
 
 }

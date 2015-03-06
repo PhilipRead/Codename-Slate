@@ -10,15 +10,15 @@ public class Spline {
      * adds the first and last control points which are not visible, but required
      * for calculating the spline.
      *
-     * @param coordinates The list of original straight line points to calculate
-     * an interpolation from.
+     * @param coordinates      The list of original straight line points to calculate
+     *                         an interpolation from.
      * @param pointsPerSegment The integer number of equally spaced points to
-     * return along each curve.  The actual distance between each
-     * point will depend on the spacing between the control points.
+     *                         return along each curve.  The actual distance between each
+     *                         point will depend on the spacing between the control points.
+     * @param curveType        Chordal (stiff), Uniform(floppy), or Centripetal(medium)
      * @return The list of interpolated coordinates.
-     * @param curveType Chordal (stiff), Uniform(floppy), or Centripetal(medium)
      * @throws java.lang.IllegalArgumentException if
-     * pointsPerSegment is less than 2.
+     *                                            pointsPerSegment is less than 2.
      */
     public static List<Coord> interpolate(List<Coord> coordinates, int pointsPerSegment, CatmullRomType curveType)
             throws java.lang.IllegalArgumentException {
@@ -108,17 +108,17 @@ public class Spline {
      * Given a list of control points, this will create a list of pointsPerSegment
      * points spaced uniformly along the resulting Catmull-Rom curve.
      *
-     * @param points The list of control points, leading and ending with a
-     * coordinate that is only used for controlling the spline and is not visualized.
-     * @param index The index of control point p0, where p0, p1, p2, and p3 are
-     * used in order to create a curve between p1 and p2.
+     * @param points           The list of control points, leading and ending with a
+     *                         coordinate that is only used for controlling the spline and is not visualized.
+     * @param index            The index of control point p0, where p0, p1, p2, and p3 are
+     *                         used in order to create a curve between p1 and p2.
      * @param pointsPerSegment The total number of uniformly spaced interpolated
-     * points to calculate for each segment. The larger this number, the
-     * smoother the resulting curve.
-     * @param curveType Clarifies whether the curve should use uniform, chordal
-     * or centripetal curve types. Uniform can produce loops, chordal can
-     * produce large distortions from the original lines, and centripetal is an
-     * optimal balance without spaces.
+     *                         points to calculate for each segment. The larger this number, the
+     *                         smoother the resulting curve.
+     * @param curveType        Clarifies whether the curve should use uniform, chordal
+     *                         or centripetal curve types. Uniform can produce loops, chordal can
+     *                         produce large distortions from the original lines, and centripetal is an
+     *                         optimal balance without spaces.
      * @return the list of coordinates that define the CatmullRom curve
      * between the points defined by index+1 and index+2.
      */
@@ -178,12 +178,12 @@ public class Spline {
      * calculation. This is based on Figure 3 from
      * http://www.cemyuksel.com/research/catmullrom_param/catmullrom.pdf
      *
-     * @param p An array of float values of length 4, where interpolation
-     * occurs from p1 to p2.
+     * @param p    An array of float values of length 4, where interpolation
+     *             occurs from p1 to p2.
      * @param time An array of time measures of length 4, corresponding to each
-     * p value.
-     * @param t the actual interpolation ratio from 0 to 1 representing the
-     * position between p1 and p2 to interpolate the value.
+     *             p value.
+     * @param t    the actual interpolation ratio from 0 to 1 representing the
+     *             position between p1 and p2 to interpolate the value.
      * @return
      */
     public static float interpolate(float[] p, float[] time, float t) {

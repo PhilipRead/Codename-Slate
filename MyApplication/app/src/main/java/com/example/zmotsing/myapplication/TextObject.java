@@ -14,8 +14,7 @@ public class TextObject {
 
     private static final Map<Character, Integer> letterTextures;
 
-    static
-    {
+    static {
         letterTextures = new HashMap<Character, Integer>();
         letterTextures.put('A', R.drawable.cap_a);
         letterTextures.put('B', R.drawable.cap_b);
@@ -46,7 +45,7 @@ public class TextObject {
     }
 
     public TextObject(Coord _c, char _letter) {
-        spr = new Sprite(letterTextures.get(_letter),_c.X,_c.Y,0.02f,0.01333f);
+        spr = new Sprite(letterTextures.get(_letter), _c.X, _c.Y, 0.2f, 0.1333f);
         c = _c;
         letter = _letter;
     }

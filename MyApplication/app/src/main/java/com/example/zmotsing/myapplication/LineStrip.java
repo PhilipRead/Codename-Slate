@@ -2,6 +2,7 @@ package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -15,14 +16,14 @@ public class LineStrip {
 
     // Our vertices.
     public float vertices[] = {
-            -1.0f,  1.0f, 0.0f,  // 0, Top Left
+            -1.0f, 1.0f, 0.0f,  // 0, Top Left
             -1.0f, -1.0f, 0.0f,  // 1, Bottom Left
             1.0f, -1.0f, 0.0f,  // 2, Bottom Right
-            1.0f,  1.0f, 0.0f,  // 3, Top Right
+            1.0f, 1.0f, 0.0f,  // 3, Top Right
     };
 
     // The order we like to connect them.
-    private short[] indices = { 0, 1, 2, 0, 2, 3 };
+    private short[] indices = {0, 1, 2, 0, 2, 3};
 
     // Our vertex buffer.
     private FloatBuffer vertexBuffer;
@@ -31,19 +32,17 @@ public class LineStrip {
     private ShortBuffer indexBuffer;
 
 
-    public LineStrip(List<Coord> points)
-    {
-        vertices = new float[points.size() *3];
+    public LineStrip(List<Coord> points) {
+        vertices = new float[points.size() * 3];
         indices = new short[points.size()];
         int i = 0;
         short j = 0;
-        for(Coord c:points)
-        {
-            vertices[i]=c.X;
+        for (Coord c : points) {
+            vertices[i] = c.X;
             i++;
-            vertices[i]=c.Y;
+            vertices[i] = c.Y;
             i++;
-            vertices[i]=c.Z;
+            vertices[i] = c.Z;
             i++;
             indices[j] = j;
             j++;
@@ -53,8 +52,8 @@ public class LineStrip {
 
 
     }
-    private void initialize()
-    {
+
+    private void initialize() {
         // a float is 4 bytes, therefore we multiply the number if
         // vertices with 4.
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -79,6 +78,7 @@ public class LineStrip {
 
     /**
      * This function draws our square on screen.
+     *
      * @param gl
      */
     public void draw(GL10 gl) {

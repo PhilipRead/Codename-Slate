@@ -7,34 +7,28 @@ public class VariableNode {
     private String name;
     private int value;
 
-    public VariableNode()
-    {
+    public VariableNode() {
     }
 
-    public VariableNode(String n, int v)
-    {
+    public VariableNode(String n, int v) {
         name = n;
         value = v;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public int getValue()
-    {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(int v)
-    {
+    public void setValue(int v) {
         value = v;
     }
 
     //return string representation of the variable and its value
-    public String output()
-    {
+    public String output() {
         return (name + " : " + value);
     }
 }

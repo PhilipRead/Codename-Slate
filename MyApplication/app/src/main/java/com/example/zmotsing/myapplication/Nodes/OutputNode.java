@@ -11,15 +11,27 @@ import com.example.zmotsing.myapplication.Sprite;
 public class OutputNode extends Node {
 
     int currentNodeIndex;
+
     public OutputNode(Coord c) {
         super(c);
-        spr = new Sprite(R.drawable.outputnode,c.X,c.Y);
+        drawableInt = R.drawable.outputnode;
         currentNodeIndex = 0;
+        scalingFactor = .2f;
+        AddToLine = 1;
     }
 
     @Override
     public void action() {
         //todo
+    }
+
+    @Override
+    protected void setSprite() {
+        spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        LBound = co.X - (Width * .5f);
+        RBound = co.X + (Width * .5f);
+        UBound = co.Y + (Height * .5f);
+        DBound = co.Y - (Width * .5f);
     }
 
 

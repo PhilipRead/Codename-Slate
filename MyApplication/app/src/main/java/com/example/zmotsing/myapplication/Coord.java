@@ -8,20 +8,20 @@ public class Coord {
     public float Y;
     public float Z;
 
-    public Coord(float x, float y)
-    {
+    public Coord(float x, float y) {
         X = x;
         Y = y;
         Z = 0;
     }
-    public Coord(float x, float y, float z)
-    {
+
+    public Coord(float x, float y, float z) {
         X = x;
         Y = y;
         Z = z;
     }
+
     public Coord copy() {
-        return new Coord(X,Y,Z);
+        return new Coord(X, Y, Z);
     }
 
     public boolean intersects2D(Coord coord) {

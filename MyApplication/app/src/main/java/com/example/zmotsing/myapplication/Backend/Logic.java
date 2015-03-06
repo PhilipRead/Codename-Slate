@@ -12,8 +12,7 @@ public class Logic {
     private CopyOnWriteArrayList<VariableNode> logicNodes = new CopyOnWriteArrayList<>(); //list of backend nodes
 
     //default constructor
-    public Logic()
-    {
+    public Logic() {
         //test code to be deleted later
         addVariableNode("x", 5);
         execute();
@@ -22,21 +21,17 @@ public class Logic {
     }
 
     //create a new variable node
-    public void addVariableNode(String name, int value)
-    {
+    public void addVariableNode(String name, int value) {
         VariableNode newNode = new VariableNode(name, value);
         logicNodes.add(newNode);
     }
 
     //update variable node
-    public void updateVariableNode(String operation, String name, int value)
-    {
+    public void updateVariableNode(String operation, String name, int value) {
         VariableNode node = new VariableNode();
         boolean found = false;
-        for(VariableNode nd : logicNodes)
-        {
-            if (nd.getName().equals(name))
-            {
+        for (VariableNode nd : logicNodes) {
+            if (nd.getName().equals(name)) {
                 node = nd;
                 found = true;
                 break;
@@ -44,13 +39,11 @@ public class Logic {
         }
 
         //error
-        if(!found)
-        {
+        if (!found) {
             return;
         }
 
-        switch(operation)
-        {
+        switch (operation) {
             case "+":
                 node.setValue(node.getValue() + value);
                 break;
@@ -71,11 +64,9 @@ public class Logic {
 
     //iterate through the backend nodes
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    public void execute()
-    {
-        for(VariableNode nd : logicNodes)
-        {
-            System.out.println( nd.output() );
+    public void execute() {
+        for (VariableNode nd : logicNodes) {
+            System.out.println(nd.output());
         }
     }
 }
