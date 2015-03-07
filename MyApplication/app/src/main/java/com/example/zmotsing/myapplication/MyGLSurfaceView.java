@@ -8,9 +8,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
-import static com.example.zmotsing.myapplication.MyGLRenderer.TouchEventCoord;
-import static com.example.zmotsing.myapplication.MyGLRenderer.Touched;
-import static com.example.zmotsing.myapplication.MyGLRenderer.translateZ;
+import static com.example.zmotsing.myapplication.MyGLRenderer.*;
 
 /**
  * Created by acowdrey on 11/12/14.
@@ -38,17 +36,26 @@ class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
+    boolean action_flag = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         Coord c = new Coord(e.getX(), e.getY());
-        TouchEventCoord = c;
-        Touched = true;
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
+                return true;
             case MotionEvent.ACTION_DOWN:
-                //addControlPoints(c.X, c.Y);
+
+                action_flag = true;
 
                 return true;
+            case MotionEvent.ACTION_UP:
+                if(action_flag) {
+                    TouchEventCoord = c;
+                    Touched = true;
+                    addControlPoints(c.X, c.Y);
+                    action_flag = false;
+                }
         }
         boolean keyboardevent = true;
 

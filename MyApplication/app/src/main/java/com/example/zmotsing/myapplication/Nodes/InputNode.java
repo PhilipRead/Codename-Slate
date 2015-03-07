@@ -1,7 +1,6 @@
 package com.example.zmotsing.myapplication.Nodes;
 
-import com.example.zmotsing.myapplication.Coord;
-import com.example.zmotsing.myapplication.Node;
+import com.example.zmotsing.myapplication.*;
 
 /**
  * Created by DreyCow on 11/25/2014.
@@ -9,13 +8,14 @@ import com.example.zmotsing.myapplication.Node;
 public class InputNode extends Node {
 
     public InputNode(Coord c) {
-
         super(c);
+        drawableInt = R.drawable.inputnode;
+        scalingFactor = .2f;
+        AddToLine = 1;
     }
 
     @Override
     public void action() {
-        //todo
     }
 
 
@@ -26,6 +26,8 @@ public class InputNode extends Node {
 
     @Override
     protected void setSprite() {
+        spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        setBounds();
 
     }
 

@@ -12,11 +12,11 @@ import android.util.Log;
 import com.example.zmotsing.myapplication.Buttons.IfButton;
 import com.example.zmotsing.myapplication.Buttons.InputButton;
 import com.example.zmotsing.myapplication.Buttons.OutputButton;
+import com.example.zmotsing.myapplication.Nodes.InputNode;
 import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
 import java.nio.FloatBuffer;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -41,10 +41,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private static Context myContext;
     private TravelingNode Tn;
 
+    public static NodeType nodeTypeCreate = null;
     static int transX;
     static int transY;
     static int transZ = -4;
-
     /**
      * Constructor to set the handed over context
      */
@@ -108,7 +108,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodesToLoad.clear();
         if (Touched) {
             Touched = false;
-            objectTouched(GetWorldCoords(gl, TouchEventCoord));
+            Node n = objectTouched(GetWorldCoords(gl, TouchEventCoord));
+            if(n!=null){n.action();}
 
         }
 
@@ -168,11 +169,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
-
+        nodeTypeCreate = NodeType.OUTPUT;
         addControlPoints(200f, 200f);
+        nodeTypeCreate = NodeType.OUTPUT;
         addControlPoints(100f, 200f);
+        nodeTypeCreate = NodeType.OUTPUT;
         addControlPoints(200f, 100f);
+        nodeTypeCreate = NodeType.OUTPUT;
         addControlPoints(250f, 50f);
+        nodeTypeCreate = NodeType.OUTPUT;
         addControlPoints(400f, 26f);
 
         Tn = new TravelingNode(new Coord(-0.6f, -0.6f));
@@ -181,9 +186,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 //        ButtonList.add(new OutputButton(new Coord(-2.1f, 1.5f)));
 //        ButtonList.add(new InputButton(new Coord(-.49f, 1.5f)));
 //        ButtonList.add(new IfButton(new Coord(1.12f, 1.5f)));
-        NodesToLoad.add(new OutputButton(new Coord(400f, 100f)));
-        NodesToLoad.add(new InputButton(new Coord(400f, 200f)));
-        NodesToLoad.add(new IfButton(new Coord(400f, 300f)));
+        float button_x = 55f;
+        float button_y = 10f;
+        float button_dx = 105f;
+        float button_dy = 0f;
+
+        NodesToLoad.add(new OutputButton(new Coord(button_x, button_y)));
+        button_x += button_dx;button_y += button_dy;
+        NodesToLoad.add(new InputButton(new Coord(button_x, button_y)));
+        button_x += button_dx;button_y += button_dy;
+        NodesToLoad.add(new IfButton(new Coord(button_x, button_y)));
+        button_x += button_dx;button_y += button_dy;
 
         textMngr.addText("TEXTTEST");
 
@@ -247,7 +260,29 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     };
 
     public static void addControlPoints(float x, float y) {
-        Node n = new OutputNode(new Coord(x, y));
+
+        Node n = null;
+        if(nodeTypeCreate != null)
+        {
+            switch  (nodeTypeCreate)
+            {
+                case INPUT:
+
+                    n = new InputNode(new Coord(x, y));
+                    break;
+                case OUTPUT:
+                    n = new OutputNode(new Coord(x, y));
+                    break;
+                case IF:
+                   // n = new OutputNode(new Coord(x, y));
+                    break;
+            }
+            nodeTypeCreate = null;
+        }
+        else
+        {
+            return;
+        }
         NodesToLoad.add(n);
     }
 
@@ -300,7 +335,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
                 Log.w("Button dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
                 Log.w("Button TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
-                break;
+                return c;
             }
         }
 
