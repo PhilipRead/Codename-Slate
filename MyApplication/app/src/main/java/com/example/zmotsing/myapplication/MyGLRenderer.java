@@ -59,10 +59,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean Touched;
     public static Coord actionDownCoord;
     public static Coord actionDownCoordGL;
+    public static Coord pointerDownCoord;
+    public static Coord pointerDownCoordGL;
+    public static Coord pointerMovedCoord;
+    public static Coord pointerMovedCoordGL;
     public static Coord actionMovedCoord;
     public static Coord actionMovedCoordGL;
+    public static double spacing;
     public static boolean actionDown;
     public static boolean actionMoved;
+    public static boolean pointerDown;
+    public static boolean pinchMoved;
+
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
     public static TextManager textMngr = new TextManager(0.0f, 0.0f, 0.0f, 0.0f);
@@ -124,6 +132,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             actionDownCoordGL = GetWorldCoords(gl, actionDownCoord);
         }
 
+        if(pointerDown){
+            pointerDown = false;
+            pointerDownCoordGL = GetWorldCoords(gl, pointerDownCoord);
+            spacing = Math.sqrt(
+                    Math.pow((actionDownCoordGL.X - pointerDownCoordGL.X), 2) +
+                    Math.pow((actionDownCoordGL.Y - pointerDownCoordGL.Y), 2));
+        }
+
         if(actionMoved){
             actionMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
@@ -133,6 +149,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
             actionDownCoordGL = actionMovedCoordGL;
         }
+
+        if(pinchMoved){
+            pinchMoved = false;
+            actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
+            pointerMovedCoordGL = GetWorldCoords(gl, pointerMovedCoord);
+
+            double newSpacing = Math.sqrt(
+                    Math.pow((actionMovedCoordGL.X - pointerMovedCoordGL.X), 2) +
+                    Math.pow((actionMovedCoordGL.Y - pointerMovedCoordGL.Y), 2));
+
+            transZ -= newSpacing - spacing;
+
+            spacing =  newSpacing;
+
+        }
+
 
         // Clears the screen and depth buffer.
 
