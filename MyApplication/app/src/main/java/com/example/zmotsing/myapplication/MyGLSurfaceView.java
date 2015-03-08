@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
@@ -37,14 +38,23 @@ class MyGLSurfaceView extends GLSurfaceView {
 
 
     boolean action_flag = false;
+    boolean swipeMode = true;
+    boolean pinchMode = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         Coord c = new Coord(e.getX(), e.getY());
-        switch (e.getAction()) {
+        switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
                 actionMovedCoord = c;
-                actionMoved = true;
+
+                if(swipeMode) {
+                    actionMoved = true;
+                }
+                else if(pinchMode) {
+                    pointerMovedCoord = new Coord(e.getX(1), e.getY(1));
+                    pinchMoved = true;
+                }
 
                 return true;
             case MotionEvent.ACTION_DOWN:
@@ -52,6 +62,19 @@ class MyGLSurfaceView extends GLSurfaceView {
                 action_flag = true;
 
                 actionDown = true;
+
+                return true;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                actionMovedCoord = c;
+                pointerDownCoord = new Coord(e.getX(1), e.getY(1));
+                swipeMode = false;
+                pinchMode = true;
+                pointerDown = true;
+
+                return true;
+            case MotionEvent.ACTION_POINTER_UP:
+                pinchMode = false;
+                swipeMode = true;
 
                 return true;
             case MotionEvent.ACTION_UP:
