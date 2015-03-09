@@ -42,6 +42,16 @@ public class TextObject {
         letterTextures.put('X', R.drawable.cap_x);
         letterTextures.put('Y', R.drawable.cap_y);
         letterTextures.put('Z', R.drawable.cap_z);
+        letterTextures.put('0', R.drawable.num_0);
+        letterTextures.put('1', R.drawable.num_1);
+        letterTextures.put('2', R.drawable.num_2);
+        letterTextures.put('3', R.drawable.num_3);
+        letterTextures.put('4', R.drawable.num_4);
+        letterTextures.put('5', R.drawable.num_5);
+        letterTextures.put('6', R.drawable.num_6);
+        letterTextures.put('7', R.drawable.num_7);
+        letterTextures.put('8', R.drawable.num_8);
+        letterTextures.put('9', R.drawable.num_9);
     }
 
     public TextObject(Coord _c, char _letter) {
