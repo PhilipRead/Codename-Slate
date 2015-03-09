@@ -159,7 +159,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     Math.pow((actionMovedCoordGL.X - pointerMovedCoordGL.X), 2) +
                     Math.pow((actionMovedCoordGL.Y - pointerMovedCoordGL.Y), 2));
 
-            transZ -= newSpacing - spacing;
+            transZ += newSpacing - spacing;
 
             spacing =  newSpacing;
 
@@ -251,7 +251,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodesToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
 
-        textMngr.addText("TEXTTEST");
+        textMngr.addText("TEST0123456789TEST");
 
         //nody = new NodeSprite();
         for (Node c : NodeList) {
