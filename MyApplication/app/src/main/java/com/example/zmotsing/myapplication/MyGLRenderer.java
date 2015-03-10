@@ -70,12 +70,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean actionMoved;
     public static boolean pointerDown;
     public static boolean pinchMoved;
+    public static Node n;
     float viewwidth;
     float viewheight;
-
+    
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
-    public static TextManager textMngr = new TextManager(0.0f, 0.0f, 0.0f, 0.0f);
+    public static TextManager inputTxt = new TextManager(1.0f, 0.0f, 0.5f, 0.0f);
+    public static TextManager outputTxt = new TextManager(1.0f, 0.0f, 0.0f, 0.0f);
 
 
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
@@ -145,15 +147,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         ButtonsToLoad.clear();
 
-        for (Node element : ButtonsToLoad) {
-
-            //Node n = new OutputButton(element.co);
-            setupGraphic(gl,element,false);
-            ButtonList.add(element);
-        }
-
-        ButtonsToLoad.clear();
-
         if (RedrawLine && controlPoints.size() > 2) {
             linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
             //objectTouched();
@@ -212,8 +205,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glTranslatef(transX, transY, transZ);
 
 
-        for (TextObject element : textMngr.getTextList()) {
+        for (TextObject element : inputTxt.getTextList()) {
             element.spr.draw(gl);
+        }
+
+        for(TextObject element: outputTxt.getTextList()) {
+            element.spr.draw(gl);
+        }
+
+        for (Node element : ButtonList) {
+            element.draw(gl);
         }
 
         for (Node element : NodeList) {
@@ -317,12 +318,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
 
-        textMngr.addText("TEST0123456789TEST");
+        inputTxt.addText("INPUT");
+        outputTxt.addText("OUTPUT");
 
         //nody = new NodeSprite();
-        for (TextObject c : textMngr.getTextList()) {
+        for (TextObject c : inputTxt.getTextList()) {
             c.spr.loadGLTexture(gl, myContext);
         }
+
+        for (TextObject c : outputTxt.getTextList()) {
+            c.spr.loadGLTexture(gl, myContext);
+        }
+
 
         Tn.setSprite();
         Tn.spr.loadGLTexture(gl, myContext);
@@ -397,7 +404,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodesToLoad.add(n);
     }
 
-    public static void translateZ(float z) {
+    public static void translateZ(int z) {
         transZ += z;
 
     }
