@@ -137,7 +137,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
         NodesToLoad.clear();
 
-
         for (Node element : ButtonsToLoad) {
 
             //Node n = new OutputButton(element.co);
@@ -213,10 +212,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             element.spr.draw(gl);
         }
 
-        for (Node element : ButtonList) {
-            element.draw(gl);
-        }
-
         for (Node element : NodeList) {
             element.spr.draw(gl);
         }
@@ -239,7 +234,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         for (Node element : ButtonList) {
-            element.spr.draw(gl);
+            element.draw(gl);
         }
         switchBackToFrustum(gl);
         // Replace the current matrix with the identity matrix
