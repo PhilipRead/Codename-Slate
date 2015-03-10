@@ -42,9 +42,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private TravelingNode Tn;
 
     public static NodeType nodeTypeCreate = null;
-    static int transX;
-    static int transY;
-    static int transZ = -4;
+    static float transX;
+    static float transY;
+    static float transZ = -4;
     /**
      * Constructor to set the handed over context
      */
@@ -57,6 +57,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static LineStrip linestrip;
     public static Coord TouchEventCoord;
     public static boolean Touched;
+    public static Coord actionDownCoord;
+    public static Coord actionDownCoordGL;
+    public static Coord actionMovedCoord;
+    public static Coord actionMovedCoordGL;
+    public static boolean actionDown;
+    public static boolean actionMoved;
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
     public static TextManager textMngr = new TextManager(0.0f, 0.0f, 0.0f, 0.0f);
@@ -111,6 +117,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Node n = objectTouched(GetWorldCoords(gl, TouchEventCoord));
             if(n!=null){n.action();}
 
+        }
+
+        if(actionDown){
+            actionDown = false;
+            actionDownCoordGL = GetWorldCoords(gl, actionDownCoord);
+        }
+
+        if(actionMoved){
+            actionMoved = false;
+            actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
+
+            transX += actionMovedCoordGL.X - actionDownCoordGL.X;
+            transY += actionMovedCoordGL.Y - actionDownCoordGL.Y;
+
+            actionDownCoordGL = actionMovedCoordGL;
         }
 
         // Clears the screen and depth buffer.

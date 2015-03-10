@@ -43,10 +43,15 @@ class MyGLSurfaceView extends GLSurfaceView {
         Coord c = new Coord(e.getX(), e.getY());
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
+                actionMovedCoord = c;
+                actionMoved = true;
+
                 return true;
             case MotionEvent.ACTION_DOWN:
-
+                actionDownCoord = c;
                 action_flag = true;
+
+                actionDown = true;
 
                 return true;
             case MotionEvent.ACTION_UP:
