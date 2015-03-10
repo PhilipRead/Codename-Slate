@@ -29,9 +29,9 @@ class MyGLSurfaceView extends GLSurfaceView {
         // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(11);
         // Set the Renderer for drawing on the GLSurfaceView
+
         setRenderer(r);
         mycontext = context;
-
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
@@ -40,6 +40,7 @@ class MyGLSurfaceView extends GLSurfaceView {
     boolean action_flag = false;
     boolean swipeMode = true;
     boolean pinchMode = false;
+    boolean inputMode = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -64,6 +65,7 @@ class MyGLSurfaceView extends GLSurfaceView {
                 actionDown = true;
 
                 return true;
+
             case MotionEvent.ACTION_POINTER_DOWN:
                 actionMovedCoord = c;
                 pointerDownCoord = new Coord(e.getX(1), e.getY(1));
@@ -88,13 +90,15 @@ class MyGLSurfaceView extends GLSurfaceView {
         boolean keyboardevent = true;
 
         if (keyboardevent) {
-            //((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, 0);
+            //((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this,InputMethodManager.RESULT_SHOWN);
+
         }
         return true;
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
+        Log.w("KEY", "" + (char)msg.getUnicodeChar());
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             return true;
         }

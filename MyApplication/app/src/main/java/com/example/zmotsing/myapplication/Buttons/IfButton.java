@@ -5,6 +5,8 @@ import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
 
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * Created by acowdrey on 3/4/15.
  */
@@ -13,8 +15,10 @@ public class IfButton extends Node {
     public IfButton(Coord c) {
         super(c);
         drawableInt = R.drawable.ifbutton;
+        drawableIntOptional = R.drawable.ifbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
+        pressed = false;
     }
 
     @Override
@@ -30,7 +34,18 @@ public class IfButton extends Node {
     @Override
     protected void setSprite() {
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        sprOptional = new Sprite(drawableInt, co.X, co.Y, Width, Height);
         setBounds();
+    }
+
+    @Override
+    public void draw(GL10 gl) {
+        if(pressed){
+            sprOptional.draw(gl);
+        }
+        else {
+            spr.draw(gl);
+        }
     }
 
     @Override

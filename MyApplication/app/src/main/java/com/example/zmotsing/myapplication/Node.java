@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication;
 
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * Created by DreyCow on 11/25/2014.
  */
@@ -7,15 +9,19 @@ package com.example.zmotsing.myapplication;
 public abstract class Node {
 
     protected Coord co;
+    protected float Z;
     protected float Width;
     protected float Height;
     protected int drawableInt;
+    protected int drawableIntOptional;
     protected float scalingFactor;
     protected int AddToLine;
     protected float LBound, RBound, UBound, DBound;
+    protected boolean pressed;
 
     public Node(Coord c) {
         co = c;
+        Z = 0f;
 
     }
 
@@ -38,10 +44,13 @@ public abstract class Node {
     abstract public void action();
 
     public Sprite spr;
+    public Sprite sprOptional;
 
     abstract public int getTextureIndex();
 
     protected abstract void setSprite();
 
     abstract public String getTitle();
+
+    public  void draw(GL10 gl){};
 }
