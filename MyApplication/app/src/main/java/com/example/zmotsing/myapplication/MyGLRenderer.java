@@ -70,6 +70,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean actionMoved;
     public static boolean pointerDown;
     public static boolean pinchMoved;
+    float viewwidth;
+    float viewheight;
 
     static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
@@ -77,8 +79,46 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
+    public static CopyOnWriteArrayList<Node> ButtonsToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
 
+
+    private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
+    {
+        //get the screen coordinate
+        Coord ScreenCoord = n.getCoord();
+
+        //get the drawable for this node
+        Drawable d = myContext.getResources().getDrawable(n.drawableInt);
+
+        Coord ScreenBRCoord;
+        Coord NewScreenCoord;
+
+
+        if(isOrtho)
+        {
+            n.Width = d.getIntrinsicWidth()/1200f;
+            n.Height = d.getIntrinsicHeight()/700f;
+            n.setCoord(ScreenCoord);
+        }
+        else {
+            //get the bottom right hand coordinate, scaling accordingly using scaling factor (scaling factor of one is actual size)
+            ScreenBRCoord = GetWorldCoords(gl, new Coord(ScreenCoord.X + n.scalingFactor * d.getIntrinsicWidth(), ScreenCoord.Y + n.scalingFactor * d.getIntrinsicHeight()));
+
+            //put the screen coordinates into opengl coordinates
+            NewScreenCoord = GetWorldCoords(gl, ScreenCoord);
+
+            //fin the opengl width and height
+            n.setCoord(NewScreenCoord);
+            n.Height = NewScreenCoord.Y - ScreenBRCoord.Y;
+            n.Width = ScreenBRCoord.X - NewScreenCoord.X;
+
+        }
+
+
+        n.setSprite();
+        n.spr.loadGLTexture(gl, myContext);
+    }
 
     @Override
     public void onDrawFrame(GL10 gl) {
@@ -86,45 +126,37 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //Load in all graphics for new nodes
         boolean RedrawLine = false;
         for (Node element : NodesToLoad) {
-            //get the screen coordinate
-            Coord ScreenCoord = element.getCoord();
 
-            //get the drawable for this node
-            Drawable d = myContext.getResources().getDrawable(element.drawableInt);
-
-            //get the bottom right hand coordinate, scaling accordingly using scaling factor (scaling factor of one is actual size)
-            Coord ScreenBRCoord = GetWorldCoords(gl, new Coord(ScreenCoord.X + element.scalingFactor * d.getIntrinsicWidth(), ScreenCoord.Y + element.scalingFactor * d.getIntrinsicHeight()));
-
-            //put the screen coordinates into opengl coordinates
-            Coord NewScreenCoord = GetWorldCoords(gl, ScreenCoord);
-
-            //fin the opengl width and height
-            element.setCoord(NewScreenCoord);
-            element.Height = NewScreenCoord.Y - ScreenBRCoord.Y;
-            element.Width = ScreenBRCoord.X - NewScreenCoord.X;
-            element.setSprite();
-            element.spr.loadGLTexture(gl, myContext);
+            setupGraphic(gl,element,false);
             NodeList.add(element);
-
-            //add to controlpoints for linestrip
-            if (element.AddToLine == 1) {
-                controlPoints.add(element.getCoord());
-                RedrawLine = true;
-
-            }
+            controlPoints.add(element.getCoord());
+            RedrawLine = true;
 
         }
+        NodesToLoad.clear();
+
+
+        for (Node element : ButtonsToLoad) {
+
+            //Node n = new OutputButton(element.co);
+            setupGraphic(gl,element,true);
+            ButtonList.add(element);
+        }
+
+        ButtonsToLoad.clear();
+
+        for (Node element : ButtonsToLoad) {
+
+            //Node n = new OutputButton(element.co);
+            setupGraphic(gl,element,false);
+            ButtonList.add(element);
+        }
+
+        ButtonsToLoad.clear();
 
         if (RedrawLine && controlPoints.size() > 2) {
             linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
             //objectTouched();
-        }
-        NodesToLoad.clear();
-        if (Touched) {
-            Touched = false;
-            Node n = objectTouched(GetWorldCoords(gl, TouchEventCoord));
-            if(n!=null){n.action();}
-
         }
 
         if(actionDown){
@@ -144,13 +176,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             actionMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
 
-            transX += actionMovedCoordGL.X - actionDownCoordGL.X;
-            transY += actionMovedCoordGL.Y - actionDownCoordGL.Y;
+            translateX(actionMovedCoordGL.X - actionDownCoordGL.X);
+            translateY(actionMovedCoordGL.Y - actionDownCoordGL.Y);
 
             actionDownCoordGL = actionMovedCoordGL;
-        }
-
-        if(pinchMoved){
+        }else if(pinchMoved){
             pinchMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
             pointerMovedCoordGL = GetWorldCoords(gl, pointerMovedCoord);
@@ -159,9 +189,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     Math.pow((actionMovedCoordGL.X - pointerMovedCoordGL.X), 2) +
                     Math.pow((actionMovedCoordGL.Y - pointerMovedCoordGL.Y), 2));
 
-            transZ += newSpacing - spacing;
+            transZ += (newSpacing - spacing)*1.4;
+
+
 
             spacing =  newSpacing;
+
+
 
         }
 
@@ -182,28 +216,60 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             element.spr.draw(gl);
         }
 
-        for (Node element : ButtonList) {
-            element.spr.draw(gl);
-        }
-
         for (Node element : NodeList) {
             element.spr.draw(gl);
         }
+
         //NodeList.get(0).spr.draw(gl);
         if (linestrip != null) {
             linestrip.draw(gl); // ( NEW )
 
         }
         Tn.spr.draw(gl);
+
+        switchToOrtho(gl);
+
+
+        if (Touched) {
+            Touched = false;
+            Node n = objectTouched(GetWorldCoords(gl,TouchEventCoord));
+            if(n!=null){n.action();}
+
+        }
+
+        for (Node element : ButtonList) {
+            element.spr.draw(gl);
+        }
+        switchBackToFrustum(gl);
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
     }
-
+    public void switchBackToFrustum(GL10 gl)
+    {
+        gl.glEnable(gl.GL_DEPTH_TEST);
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(gl.GL_MODELVIEW);
+    }
+    public void switchToOrtho(GL10 gl)
+    {
+        gl.glDisable(gl.GL_DEPTH_TEST);
+        gl.glMatrixMode(gl.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        //gl.glViewport(0, 0, viewwidth, viewheight);
+        //GLU.gluOrtho2D(gl,0f, viewwidth,0f, viewheight);
+        //GLU.gluOrtho2D(gl,0f, viewwidth,viewheight,0f );
+        //gl.glOrthof(0, 558, 0, 321, -5, 1);
+        gl.glMatrixMode(gl.GL_MODELVIEW);
+        gl.glLoadIdentity();
+    }
     public void onSurfaceChanged(GL10 gl, int width, int height) {
 
         //sets the viewport size
         gl.glViewport(0, 0, width, height);  //WHOLE SCREEN
-
+        viewwidth = width;
+        viewheight = height;
         // Select the projection matrix
         gl.glMatrixMode(GL10.GL_PROJECTION);
         // Reset the projection matrix
@@ -239,30 +305,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 //        ButtonList.add(new OutputButton(new Coord(-2.1f, 1.5f)));
 //        ButtonList.add(new InputButton(new Coord(-.49f, 1.5f)));
 //        ButtonList.add(new IfButton(new Coord(1.12f, 1.5f)));
-        float button_x = 55f;
-        float button_y = 10f;
-        float button_dx = 105f;
+        float button_x = -0.78f;
+        float button_y = 0.9f;
+        float button_dx = .427f;
         float button_dy = 0f;
 
-        NodesToLoad.add(new OutputButton(new Coord(button_x, button_y)));
+        ButtonsToLoad.add(new OutputButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
-        NodesToLoad.add(new InputButton(new Coord(button_x, button_y)));
+        ButtonsToLoad.add(new InputButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
-        NodesToLoad.add(new IfButton(new Coord(button_x, button_y)));
+        ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
 
         textMngr.addText("TEST0123456789TEST");
 
         //nody = new NodeSprite();
-        for (Node c : NodeList) {
-            c.setSprite();
-            c.spr.loadGLTexture(gl, myContext);
-        }
         for (TextObject c : textMngr.getTextList()) {
-            c.spr.loadGLTexture(gl, myContext);
-        }
-        for (Node c : ButtonList) {
-            c.setSprite();
             c.spr.loadGLTexture(gl, myContext);
         }
 
@@ -339,8 +397,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         NodesToLoad.add(n);
     }
 
-    public static void translateZ(int z) {
+    public static void translateZ(float z) {
         transZ += z;
+
+    }
+    public static void translateY(float y) {
+        transY += y;
+
+    }
+    public static void translateX(float x) {
+        transX += x;
 
     }
 
@@ -353,7 +419,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
      *              actual position on physical screen (ej: 160, 240)
      * @return position in WCS.
      */
-    public Coord GetWorldCoords(GL10 gl, Coord touch) {
+    public Coord GetWorldCoords(GL10 gl, Coord touch, float z) {
 
         GL11 gl11 = (GL11) gl;
         GL11ExtensionPack gl11ext = (GL11ExtensionPack) gl;
@@ -380,11 +446,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     }
 
+
+    public Coord GetWorldCoords(GL10 gl, Coord touch) {
+
+        return GetWorldCoords(gl,touch, 0);
+
+    }
+
     public Node objectTouched(Coord glCoord) {
-        float x = glCoord.X;
-        float y = glCoord.Y;
-        for (int j = NodeList.size() - 1; j >= 0; j--) {
-            Node c = NodeList.get(j);
+        float x = glCoord.X/4;
+        float y = glCoord.Y/4;
+        for (int j = ButtonList.size() - 1; j >= 0; j--) {
+            Node c = ButtonList.get(j);
             if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
                 Log.w("Button dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
                 Log.w("Button TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);

@@ -22,7 +22,6 @@ public class OutputButton extends Node {
     @Override
     public void action() {
         com.example.zmotsing.myapplication.MyGLRenderer.nodeTypeCreate= NodeType.OUTPUT;
-
     }
 
     @Override
@@ -34,6 +33,7 @@ public class OutputButton extends Node {
     protected void setSprite() {
         //Coord
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        //spr.printcoord = true;
         setBounds();
     }
 

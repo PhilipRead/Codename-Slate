@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -21,6 +22,7 @@ public class Sprite {
     private float height = 0.1333f;
     public float X = 1.5f;
     public float Y = 0.2f;
+    public boolean printcoord = false;
     private float vertices[] = {
             0.0f, 0.0f, 0.0f,        // V1 - bottom left
             0.0f, 0.0f, 0.0f,        // V2 - top left
@@ -89,6 +91,9 @@ public class Sprite {
      * The draw method for the square with the GL context
      */
     public void draw(GL10 gl) {
+        if(printcoord) {
+            Log.w("SpriteCoord", "(" + X + " , " + Y + ")");
+        }
         // bind the previously generated texture
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 

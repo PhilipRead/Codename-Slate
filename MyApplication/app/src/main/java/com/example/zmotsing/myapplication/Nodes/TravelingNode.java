@@ -42,7 +42,7 @@ public class TravelingNode extends Node {
     @Override
     public void setSprite() {
         spr = new Sprite(R.drawable.travellingnode, super.getCoord().X, super.getCoord().Y, 0.02f * 4, 0.01333f * 4);
-
+        //spr.printcoord = true;
     }
 
 

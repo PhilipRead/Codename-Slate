@@ -7,6 +7,7 @@ package com.example.zmotsing.myapplication;
 public abstract class Node {
 
     protected Coord co;
+    protected float Z;
     protected float Width;
     protected float Height;
     protected int drawableInt;
@@ -16,6 +17,7 @@ public abstract class Node {
 
     public Node(Coord c) {
         co = c;
+        Z = 0f;
 
     }
 
