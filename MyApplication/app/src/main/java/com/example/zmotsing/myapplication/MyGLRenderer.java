@@ -18,6 +18,7 @@ import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
 import java.nio.FloatBuffer;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -351,10 +352,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Timer myTimer = new Timer();
 
-//        myTimer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {AdvanceTravelingNode();}
-//        }, 0, 10);
+        myTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {AdvanceTravelingNode();}
+        }, 0, 10);
 
 
     }

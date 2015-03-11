@@ -20,8 +20,9 @@ public class TravelingNode extends Node {
     }
 
     @Override
-    public void action() {
-        if (true)// if(MyGLRenderer.linestrip.vertices.length/3 > ArrayIndex)
+    public void action()
+    {
+        if(MyGLRenderer.linestrip.vertices.length > ArrayIndex)
         {
             float x = MyGLRenderer.linestrip.vertices[ArrayIndex];
             float y = MyGLRenderer.linestrip.vertices[ArrayIndex + 1];
