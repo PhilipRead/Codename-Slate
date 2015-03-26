@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class TextManager {
 
-    private float leftBound, rightBound, upBound, downBound, curX, curY;
+    private float leftBound, rightBound, upBound, downBound, origX, curX, origY, curY;
 
     private CopyOnWriteArrayList<TextObject> TextList = new CopyOnWriteArrayList<>();
 
@@ -17,8 +17,8 @@ public class TextManager {
         rightBound = _rightBound;
         upBound = _upBound;
         downBound = _downBound;
-        curX = _leftBound;
-        curY = _upBound;
+        curX = origX = _leftBound;
+        curY = origY = _upBound;
     }
 
     public void addText(String newText) {
@@ -26,6 +26,12 @@ public class TextManager {
             TextList.add(new TextObject(new Coord(curX, curY), newText.charAt(i)));
             curX += .35;
         }
+    }
+
+    public void clear() {
+        TextList.clear();
+        curX = origX;
+        curY = origY;
     }
 
     public CopyOnWriteArrayList<TextObject> getTextList() {

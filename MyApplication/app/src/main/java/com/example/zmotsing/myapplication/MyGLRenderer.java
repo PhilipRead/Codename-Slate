@@ -84,6 +84,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
     public static CopyOnWriteArrayList<Node> ButtonsToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<TextObject> inputTxtToLoad = new CopyOnWriteArrayList<>();
 
 
     private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
@@ -146,6 +147,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         ButtonsToLoad.clear();
+
+        for(TextObject element : inputTxtToLoad){
+            inputTxt.getTextList().add(element);
+        }
+
+        inputTxtToLoad.clear();
 
         if (RedrawLine && controlPoints.size() > 2) {
             linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
@@ -474,4 +481,5 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void setContext(Context context) {
         myContext = context;
     }
+
 }

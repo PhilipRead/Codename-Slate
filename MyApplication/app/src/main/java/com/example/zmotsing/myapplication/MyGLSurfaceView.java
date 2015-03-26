@@ -91,7 +91,7 @@ class MyGLSurfaceView extends GLSurfaceView {
 
         if (keyboardevent) {
             //((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this,InputMethodManager.RESULT_SHOWN);
-
+            getInput();
         }
         return true;
     }
@@ -132,4 +132,14 @@ class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
+    public boolean getInput(){
+
+        String inputBuffer = "";
+        inputTxt.clear();
+        ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this,InputMethodManager.RESULT_SHOWN);
+
+        //Enter key detected. Close keyboard.
+         //inputTxtToLoad.add(new TextObject());
+        return true;
+    }
 }
