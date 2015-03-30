@@ -42,7 +42,7 @@ class MyGLSurfaceView extends GLSurfaceView {
     boolean pinchMode = false;
     boolean inputMode = false;
 
-
+    String inputBuffer;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -89,12 +89,7 @@ class MyGLSurfaceView extends GLSurfaceView {
                     action_flag = false;
                 }
         }
-        boolean keyboardevent = true;
 
-        if (keyboardevent) {
-            //((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this,InputMethodManager.RESULT_SHOWN);
-            getInput();
-        }
         return true;
     }
 
@@ -105,12 +100,16 @@ class MyGLSurfaceView extends GLSurfaceView {
         {
             if(keyCode >= 29 && keyCode <= 54) //Letter
             {
-                inputTxtToLoad.add("" + (char)msg.getUnicodeChar(1));
-               // Log.w("LETTER", "" + (char)msg.getUnicodeChar(1));
+                char tempChar = (char)msg.getUnicodeChar(1);
+                inputTxtToLoad.add("" + tempChar);
+                inputBuffer += tempChar;
             }
             else if(keyCode >= 7 && keyCode <= 16 && msg.getMetaState() == 0) //Number
             {
-                Log.w("NUMBER", "" + msg.getNumber());
+                char tempNum = (char)msg.getUnicodeChar();
+                Log.w("NUMBER", "" + tempNum);
+                inputTxtToLoad.add("" + tempNum);
+                inputBuffer += tempNum;
             }
         }
 
@@ -131,22 +130,23 @@ class MyGLSurfaceView extends GLSurfaceView {
         }
 
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
+            if(inputMode)
+            {
+                ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
+                //Send input buffer to backend, signal frontend to continue.
+                inputMode = false;
+            }
         }
 
         return false;
     }
 
 
-    public boolean getInput(){
+    public void getInput(){
 
         inputMode = true;
-        String inputBuffer = "";
+        inputBuffer = "";
         inputTxt.clear();
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, InputMethodManager.RESULT_SHOWN);
-
-        //Enter key detected. Close keyboard.
-         //inputTxtToLoad.add(new TextObject());
-        return true;
     }
 }
