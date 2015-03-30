@@ -1,6 +1,7 @@
 package com.example.zmotsing.myapplication.Buttons;
 
 import com.example.zmotsing.myapplication.Coord;
+import com.example.zmotsing.myapplication.MyGLSurfaceView;
 import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.NodeType;
 import com.example.zmotsing.myapplication.R;
@@ -24,7 +25,7 @@ public class InputButton extends Node {
     }
 
     @Override
-    public void action() {
+    public void action(MyGLSurfaceView SV) {
         com.example.zmotsing.myapplication.MyGLRenderer.nodeTypeCreate= NodeType.INPUT;
 
     }

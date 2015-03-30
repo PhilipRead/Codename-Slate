@@ -41,7 +41,7 @@ public abstract class Node {
         co = c;
     }
 
-    abstract public void action();
+    abstract public void action(MyGLSurfaceView SV);
 
     public Sprite spr;
     public Sprite sprOptional;

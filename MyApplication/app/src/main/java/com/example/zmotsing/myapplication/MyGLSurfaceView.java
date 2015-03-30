@@ -16,7 +16,7 @@ import static com.example.zmotsing.myapplication.MyGLRenderer.*;
  */
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class MyGLSurfaceView extends GLSurfaceView {
+public class MyGLSurfaceView extends GLSurfaceView {
 
     Context mycontext;
     MyGLRenderer r = new MyGLRenderer();
@@ -31,6 +31,7 @@ class MyGLSurfaceView extends GLSurfaceView {
         // Set the Renderer for drawing on the GLSurfaceView
 
         setRenderer(r);
+        r.surfaceview = this;
         mycontext = context;
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

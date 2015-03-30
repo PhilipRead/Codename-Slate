@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication.Nodes;
 
+import android.util.Log;
+
 import com.example.zmotsing.myapplication.*;
 
 /**
@@ -18,7 +20,8 @@ public class OutputNode extends Node {
     }
 
     @Override
-    public void action() {
+    public void action(MyGLSurfaceView SV) {
+        Log.w("NODEACTION", "OUTPUT");
     }
 
     @Override

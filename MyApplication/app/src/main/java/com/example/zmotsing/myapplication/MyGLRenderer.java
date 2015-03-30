@@ -33,19 +33,21 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
+    final Handler TnHandler = new Handler();
 
     private int[] Textures = new int[1]; //textures pointers
     private int activeTexture = 0; //which texture is active (by index)
 
     int i = 0;
-    final Handler myHandler = new Handler();
     private static Context myContext;
-    private TravelingNode Tn;
+    public static TravelingNode Tn;
 
     public static NodeType nodeTypeCreate = null;
     static float transX;
     static float transY;
     static float transZ = -4;
+    public MyGLSurfaceView surfaceview;
+
     /**
      * Constructor to set the handed over context
      */
@@ -74,8 +76,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static Node n;
     float viewwidth;
     float viewheight;
-    
-    static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
+
+    public static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
     public static TextManager inputTxt = new TextManager(1.0f, 0.0f, 0.5f, 0.0f);
     public static TextManager outputTxt = new TextManager(1.0f, 0.0f, 0.0f, 0.0f);
@@ -242,7 +244,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         if (Touched) {
             Touched = false;
             Node n = objectTouched(GetWorldCoords(gl,TouchEventCoord));
-            if(n!=null){n.action();}
+            if(n!=null){n.action(surfaceview);}
 
         }
 
@@ -294,6 +296,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     }
 
+
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
@@ -309,6 +312,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         addControlPoints(400f, 26f);
 
         Tn = new TravelingNode(new Coord(-0.6f, -0.6f));
+
+        final Runnable myRunnable = new Runnable() {
+            public void run() {
+                Tn.action(surfaceview);
+            }
+        };
+
+        Tn.setHandler(myRunnable,TnHandler);
         float bs = 1.61f; // buttonspacing
 
 //        ButtonList.add(new OutputButton(new Coord(-2.1f, 1.5f)));
@@ -338,6 +349,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Tn.setSprite();
         Tn.spr.loadGLTexture(gl, myContext);
+        Tn.start();
         //square.loadGLTexture(gl, myContext);
 
 
@@ -357,30 +369,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
-
-
-        Timer myTimer = new Timer();
-
-        myTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {AdvanceTravelingNode();}
-        }, 0, 10);
-
-
     }
 
 
-    private void AdvanceTravelingNode() {
-        i++;
-        //tv.setText(String.valueOf(i));
-        myHandler.post(myRunnable);
-    }
 
-    final Runnable myRunnable = new Runnable() {
-        public void run() {
-            Tn.action();
-        }
-    };
 
     public static void addControlPoints(float x, float y) {
 

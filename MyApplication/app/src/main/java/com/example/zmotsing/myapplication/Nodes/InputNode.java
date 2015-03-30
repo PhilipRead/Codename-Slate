@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication.Nodes;
 
+import android.util.Log;
+
 import com.example.zmotsing.myapplication.*;
 
 /**
@@ -15,9 +17,12 @@ public class InputNode extends Node {
     }
 
     @Override
-    public void action() {
-    }
+    public void action(MyGLSurfaceView SV) {
 
+        MyGLRenderer.Tn.stop();
+        SV.getInput();
+        //surfaceview
+    }
 
     @Override
     public int getTextureIndex() {
