@@ -326,9 +326,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
 
-        inputTxt.addText("INPUT");
-        outputTxt.addText("OUTPUT");
-
         //nody = new NodeSprite();
         for (TextObject c : inputTxt.getTextList()) {
             c.spr.loadGLTexture(gl, myContext);
