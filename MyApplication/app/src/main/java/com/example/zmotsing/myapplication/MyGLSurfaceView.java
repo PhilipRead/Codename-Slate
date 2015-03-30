@@ -67,6 +67,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
                 actionDown = true;
 
+
                 return true;
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -133,17 +134,20 @@ public class MyGLSurfaceView extends GLSurfaceView {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             if(inputMode)
             {
-                ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
-                //Send input buffer to backend, signal frontend to continue.
                 inputMode = false;
+                ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
+
+                //Send input buffer to backend
+
+                Tn.start();
             }
+            return true;
         }
 
         return false;
     }
 
-
-    public void getInput(){
+    public void getInput() {
 
         inputMode = true;
         inputBuffer = "";
