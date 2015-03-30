@@ -42,6 +42,8 @@ class MyGLSurfaceView extends GLSurfaceView {
     boolean pinchMode = false;
     boolean inputMode = false;
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         Coord c = new Coord(e.getX(), e.getY());
@@ -98,7 +100,20 @@ class MyGLSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
-        Log.w("KEY", "" + (char)msg.getUnicodeChar());
+
+        if(inputMode)
+        {
+            if(keyCode >= 29 && keyCode <= 54) //Letter
+            {
+                inputTxtToLoad.add("" + (char)msg.getUnicodeChar(1));
+               // Log.w("LETTER", "" + (char)msg.getUnicodeChar(1));
+            }
+            else if(keyCode >= 7 && keyCode <= 16 && msg.getMetaState() == 0) //Number
+            {
+                Log.w("NUMBER", "" + msg.getNumber());
+            }
+        }
+
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             return true;
         }
@@ -119,24 +134,16 @@ class MyGLSurfaceView extends GLSurfaceView {
             ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
         }
 
-        if (keyCode == KeyEvent.KEYCODE_U) {
-            translateZ(-1);
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_D) {
-
-            translateZ(1);
-        }
-
         return false;
     }
 
 
     public boolean getInput(){
 
+        inputMode = true;
         String inputBuffer = "";
         inputTxt.clear();
-        ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this,InputMethodManager.RESULT_SHOWN);
+        ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, InputMethodManager.RESULT_SHOWN);
 
         //Enter key detected. Close keyboard.
          //inputTxtToLoad.add(new TextObject());

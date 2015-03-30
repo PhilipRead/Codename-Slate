@@ -21,11 +21,16 @@ public class TextManager {
         curY = origY = _upBound;
     }
 
-    public void addText(String newText) {
+    public TextObject [] addText(String newText) {
+        TextObject [] tempArr = new TextObject[newText.length()];
         for (int i = 0; i < newText.length(); i++) {
-            TextList.add(new TextObject(new Coord(curX, curY), newText.charAt(i)));
+            TextObject tempObj = new TextObject(new Coord (curX, curY), newText.charAt(i));
+            tempArr[i] = tempObj;
+            TextList.add(tempObj);
             curX += .35;
         }
+
+        return tempArr;
     }
 
     public void clear() {

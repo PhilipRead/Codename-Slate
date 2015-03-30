@@ -84,7 +84,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
     public static CopyOnWriteArrayList<Node> ButtonsToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<TextObject> inputTxtToLoad = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<String> inputTxtToLoad = new CopyOnWriteArrayList<>();
 
 
     private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
@@ -148,8 +148,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         ButtonsToLoad.clear();
 
-        for(TextObject element : inputTxtToLoad){
-            inputTxt.getTextList().add(element);
+        for(String element : inputTxtToLoad){
+            TextObject [] tempArr = inputTxt.addText(element);
+            for(int i=0; i<tempArr.length; i++)
+            {
+                tempArr[i].spr.loadGLTexture(gl, myContext);
+            }
+
         }
 
         inputTxtToLoad.clear();
