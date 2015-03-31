@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.zmotsing.myapplication.Buttons.IfButton;
 import com.example.zmotsing.myapplication.Buttons.InputButton;
 import com.example.zmotsing.myapplication.Buttons.OutputButton;
+import com.example.zmotsing.myapplication.Buttons.PlayButton;
 import com.example.zmotsing.myapplication.Nodes.InputNode;
 import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
@@ -336,6 +337,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         button_x += button_dx;button_y += button_dy;
         ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x += button_dx;button_y += button_dy;
+        ButtonsToLoad.add(new PlayButton(new Coord(0.88f, 0.81f)));
 
         //nody = new NodeSprite();
         for (TextObject c : inputTxt.getTextList()) {
