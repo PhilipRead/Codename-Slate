@@ -13,6 +13,7 @@ import com.example.zmotsing.myapplication.Buttons.IfButton;
 import com.example.zmotsing.myapplication.Buttons.InputButton;
 import com.example.zmotsing.myapplication.Buttons.OutputButton;
 import com.example.zmotsing.myapplication.Buttons.PlayButton;
+import com.example.zmotsing.myapplication.Nodes.BackgroundNode;
 import com.example.zmotsing.myapplication.Nodes.InputNode;
 import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
@@ -42,6 +43,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     int i = 0;
     private static Context myContext;
     public static TravelingNode Tn;
+    public static BackgroundNode Bn;
 
     public static NodeType nodeTypeCreate = null;
     static float transX;
@@ -217,6 +219,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Translates 4 units into the screen.
 //        square.draw(gl);
 
+
+
+        switchToOrtho(gl);
+        Bn.spr.draw(gl);
+        switchBackToFrustum(gl);
+
         gl.glTranslatef(transX, transY, transZ);
 
 
@@ -313,6 +321,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         addControlPoints(400f, 26f);
 
         Tn = new TravelingNode(new Coord(-0.6f, -0.6f));
+        Bn = new BackgroundNode(new Coord(0f, 0f));
 
         final Runnable myRunnable = new Runnable() {
             public void run() {
@@ -348,6 +357,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             c.spr.loadGLTexture(gl, myContext);
         }
 
+
+        Bn.setSprite();
+        Bn.spr.loadGLTexture(gl,myContext);
 
         Tn.setSprite();
         Tn.spr.loadGLTexture(gl, myContext);
