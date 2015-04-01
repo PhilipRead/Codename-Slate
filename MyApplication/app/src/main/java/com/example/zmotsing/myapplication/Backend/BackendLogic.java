@@ -9,8 +9,8 @@ public class BackendLogic
 {
     private static CopyOnWriteArrayList<BackendNode> logicNodes = new CopyOnWriteArrayList<>();
 
-    // Private Methods
-    private static BackendNode findNode(String id)
+// General Methods
+    public static BackendNode findNode(String id)
     {
         BackendNode node = null;
         for (BackendNode nd : logicNodes)
@@ -25,7 +25,6 @@ public class BackendLogic
         return node;
     }
 
-    // General Methods
     public static boolean addNode(String id, String type)
     {
         switch(type)
@@ -49,7 +48,28 @@ public class BackendLogic
         return true;
     }
 
-    // Input Nodes
+// Register Methods
+    private BackendLogic()
+    {
+        addNode("0", "input");
+        initializeInputNode("0", "REG_VAL", "");
+        addNode("1", "output");
+        initializeOutputNode("1", "REG_VAL");
+    }
+
+    public static boolean updateRegister(String value)
+    {
+        updateInputNode("0", "", value);
+        return true;
+    }
+
+    public static String printRegister()
+    {
+        OutputNode node = (OutputNode)findNode("1");
+        return node.getText();
+    }
+
+// Input Nodes
     public static void initializeInputNode(String id, String name, String value)
     {
         InputNode node = (InputNode)findNode(id);
@@ -60,7 +80,8 @@ public class BackendLogic
     {
         InputNode node = (InputNode)findNode(id);
 
-        try {
+        try
+        {
             int intValue = Integer.parseInt(value);
 
             switch (operation) {
@@ -94,7 +115,11 @@ public class BackendLogic
     }
 
 // Output Nodes
+    public static void initializeOutputNode(String id, String text)
+    {
+        OutputNode node = (OutputNode)findNode(id);
+        node.setText(text);
+    }
 
 // If-Else Nodes
-
 }
