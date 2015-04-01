@@ -20,8 +20,11 @@ public class OutputNode extends Node {
     }
 
     @Override
-    public void action(MyGLSurfaceView SV) {
+    public void action(MyGLSurfaceView SV)
+    {
         Log.w("NODEACTION", "OUTPUT");
+        MyGLRenderer.Tn.stop();
+        SV.getOutput();
     }
 
     @Override

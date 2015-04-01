@@ -49,7 +49,7 @@ public class BackendLogic
     }
 
 // Register Methods
-    private BackendLogic()
+    public static void backendInitialize()
     {
         addNode("0", "input");
         initializeInputNode("0", "REG_VAL", "");

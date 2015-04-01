@@ -9,6 +9,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.zmotsing.myapplication.Backend.BackendLogic;
+
 import static com.example.zmotsing.myapplication.MyGLRenderer.*;
 
 /**
@@ -35,6 +37,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         mycontext = context;
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        BackendLogic.backendInitialize();
     }
 
 
@@ -137,7 +140,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 inputMode = false;
                 ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
 
-                //Send input buffer to backend
+                BackendLogic.updateRegister(inputBuffer);
 
                 Tn.start();
             }
@@ -153,5 +156,16 @@ public class MyGLSurfaceView extends GLSurfaceView {
         inputBuffer = "";
         inputTxt.clear();
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, InputMethodManager.RESULT_SHOWN);
+    }
+
+    int testNum = 0;
+    public void getOutput() {
+
+
+        String curOutput = BackendLogic.printRegister();
+        outputTxt.clear();
+        outputTxtToLoad.add(curOutput);
+
+        Tn.start();
     }
 }
