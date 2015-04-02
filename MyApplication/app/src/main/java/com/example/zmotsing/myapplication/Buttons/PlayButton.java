@@ -22,7 +22,6 @@ public class PlayButton extends Node {
         //drawableIntOptional = R.drawable.playButton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
-        pressed = false;
 
     }
 
@@ -55,12 +54,12 @@ public class PlayButton extends Node {
 
     @Override
     public void draw(GL10 gl) {
-        if(pressed){
-            sprOptional.draw(gl);
-        }
-        else {
-            spr.draw(gl);
-        }
+        spr.draw(gl);
+    }
+
+    @Override
+    public void drawPressed(GL10 gl){
+        sprOptional.draw(gl);
     }
 
     @Override

@@ -20,7 +20,6 @@ public class InputButton extends Node {
         drawableIntOptional = R.drawable.inputbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
-        pressed = false;
 
     }
 
@@ -38,18 +37,18 @@ public class InputButton extends Node {
     @Override
     protected void setSprite() {
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
-        sprOptional = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        sprOptional = new Sprite(drawableIntOptional, co.X, co.Y, Width, Height);
         setBounds();
     }
 
     @Override
     public void draw(GL10 gl) {
-        if(pressed){
-            sprOptional.draw(gl);
-        }
-        else {
-            spr.draw(gl);
-        }
+        spr.draw(gl);
+    }
+
+    @Override
+    public void drawPressed(GL10 gl){
+        sprOptional.draw(gl);
     }
 
     @Override

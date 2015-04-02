@@ -44,7 +44,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
-    boolean action_flag = false;
     boolean swipeMode = true;
     boolean pinchMode = false;
     boolean inputMode = false;
@@ -85,7 +84,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
             case MotionEvent.ACTION_DOWN:
                 actionDownCoord = c;
                 action_flag = true;
-
+                TouchedDown = true;
+                TouchDownCoord = c;
                 actionDown = true;
 
 
@@ -105,11 +105,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
                 return true;
             case MotionEvent.ACTION_UP:
-                if(action_flag) {
+                if(action_flag)
+                {
                     TouchEventCoord = c;
                     Touched = true;
-                    addControlPoints(c.X, c.Y);
+                    if( curPressed == null) {
+                        addControlPoints(c.X, c.Y);
+                    }
                     action_flag = false;
+                    curPressed = null;
                 }
         }
 

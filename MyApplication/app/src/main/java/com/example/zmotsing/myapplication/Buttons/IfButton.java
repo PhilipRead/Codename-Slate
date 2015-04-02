@@ -19,7 +19,6 @@ public class IfButton extends Node {
         drawableIntOptional = R.drawable.ifbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
-        pressed = false;
     }
 
     @Override
@@ -35,18 +34,18 @@ public class IfButton extends Node {
     @Override
     protected void setSprite() {
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
-        sprOptional = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        sprOptional = new Sprite(drawableIntOptional, co.X, co.Y, Width, Height);
         setBounds();
     }
 
     @Override
     public void draw(GL10 gl) {
-        if(pressed){
-            sprOptional.draw(gl);
-        }
-        else {
             spr.draw(gl);
-        }
+    }
+
+    @Override
+    public void drawPressed(GL10 gl){
+        sprOptional.draw(gl);
     }
 
     @Override

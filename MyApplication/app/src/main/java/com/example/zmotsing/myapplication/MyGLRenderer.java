@@ -19,8 +19,6 @@ import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
 import java.nio.FloatBuffer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -45,6 +43,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static TravelingNode Tn;
     public static BackgroundNode Bn;
 
+    public static boolean action_flag = false;
     public static NodeType nodeTypeCreate = null;
     static float transX;
     static float transY;
@@ -62,6 +61,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static LineStrip linestrip;
     public static Coord TouchEventCoord;
+    public static Coord TouchDownCoord;
+    public static boolean TouchedDown;
     public static boolean Touched;
     public static Coord actionDownCoord;
     public static Coord actionDownCoordGL;
@@ -77,6 +78,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean pointerDown;
     public static boolean pinchMoved;
     public static Node n;
+    public static Node curPressed;
     float viewwidth;
     float viewheight;
 
@@ -126,7 +128,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         n.setSprite();
+
         n.spr.loadGLTexture(gl, myContext);
+        if(n.sprOptional != null) {
+            n.sprOptional.loadGLTexture(gl, myContext);
+        }
     }
 
     @Override
@@ -261,6 +267,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         switchToOrtho(gl);
 
 
+        if (TouchedDown) {
+            TouchedDown = false;
+            Node n = objectTouched(GetWorldCoords(gl,TouchDownCoord));
+
+            curPressed = n;
+
+        }
         if (Touched) {
             Touched = false;
             Node n = objectTouched(GetWorldCoords(gl,TouchEventCoord));
@@ -269,7 +282,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         for (Node element : ButtonList) {
-            element.draw(gl);
+            if(element == curPressed)
+            {
+                element.drawPressed(gl);
+            }
+            else
+            {
+                element.draw(gl);
+            }
         }
         switchBackToFrustum(gl);
         // Replace the current matrix with the identity matrix

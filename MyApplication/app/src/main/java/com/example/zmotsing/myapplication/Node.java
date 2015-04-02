@@ -17,7 +17,6 @@ public abstract class Node {
     protected float scalingFactor;
     protected int AddToLine;
     protected float LBound, RBound, UBound, DBound;
-    protected boolean pressed;
 
     public Node(Coord c) {
         co = c;
@@ -44,7 +43,7 @@ public abstract class Node {
     abstract public void action(MyGLSurfaceView SV);
 
     public Sprite spr;
-    public Sprite sprOptional;
+    public Sprite sprOptional = null;
 
     abstract public int getTextureIndex();
 
@@ -53,4 +52,6 @@ public abstract class Node {
     abstract public String getTitle();
 
     public  void draw(GL10 gl){};
+
+    public void drawPressed(GL10 gl) {};
 }
