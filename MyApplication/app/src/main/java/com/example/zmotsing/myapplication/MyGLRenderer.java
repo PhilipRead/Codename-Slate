@@ -320,16 +320,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
-        nodeTypeCreate = NodeType.OUTPUT;
-        addControlPoints(200f, 200f);
-        nodeTypeCreate = NodeType.OUTPUT;
-        addControlPoints(100f, 200f);
-        nodeTypeCreate = NodeType.OUTPUT;
-        addControlPoints(200f, 100f);
-        nodeTypeCreate = NodeType.OUTPUT;
-        addControlPoints(250f, 50f);
-        nodeTypeCreate = NodeType.OUTPUT;
-        addControlPoints(400f, 26f);
+//        nodeTypeCreate = NodeType.OUTPUT;
+//        addControlPoints(200f, 200f);
+//        nodeTypeCreate = NodeType.OUTPUT;
+//        addControlPoints(100f, 200f);
+//        nodeTypeCreate = NodeType.OUTPUT;
+//        addControlPoints(200f, 100f);
+//        nodeTypeCreate = NodeType.OUTPUT;
+//        addControlPoints(250f, 50f);
+//        nodeTypeCreate = NodeType.OUTPUT;
+//        addControlPoints(400f, 26f);
 
         Tn = new TravelingNode(new Coord(-0.6f, -0.6f));
         Bn = new BackgroundNode(new Coord(0f, 0f));
