@@ -86,6 +86,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         wmlp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         //wmlp.height = sHeight;
         alert.getWindow().setAttributes(wmlp);
+
         Coord c = new Coord(e.getX(), e.getY());
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
