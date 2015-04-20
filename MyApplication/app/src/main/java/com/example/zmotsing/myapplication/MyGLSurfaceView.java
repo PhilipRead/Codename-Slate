@@ -61,6 +61,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         TextView textView = new TextView(getContext());
         int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
         int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
+
         //textView.setMinWidth(0);
        // textView.setMinEms(0);
         textView.setHeight(sHeight);
