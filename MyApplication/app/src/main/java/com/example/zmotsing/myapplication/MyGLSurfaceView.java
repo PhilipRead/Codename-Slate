@@ -46,6 +46,39 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         BackendLogic.backendInitialize();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        TextView textView = new TextView(getContext());
+        int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
+        int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
+
+        //textView.setMinWidth(0);
+        // textView.setMinEms(0);
+        textView.setHeight(sHeight);
+        // textView.setWidth(10);
+
+        //LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(10, sHeight);
+        //textView.setLayoutParams(tempParams);
+        //textView.setText("TEST");
+
+        builder.setCancelable(false)
+                .setView(textView);
+                /*.setNegativeButton("I wish I was", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }*/
+        AlertDialog alert = builder.create();
+
+
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                                   WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+        alert.show();
+        WindowManager.LayoutParams wmlp = alert.getWindow().getAttributes();
+        wmlp.width = sWidth;
+        wmlp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+        //wmlp.height = sHeight;
+        alert.getWindow().setAttributes(wmlp);
     }
 
 
@@ -57,36 +90,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        TextView textView = new TextView(getContext());
-        int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
-        int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
-
-        //textView.setMinWidth(0);
-       // textView.setMinEms(0);
-        textView.setHeight(sHeight);
-       // textView.setWidth(10);
-
-        //LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(10, sHeight);
-        //textView.setLayoutParams(tempParams);
-        //textView.setText("TEST");
-
-        builder.setCancelable(false)
-            .setView(textView);
-                /*.setNegativeButton("I wish I was", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }*/
-        AlertDialog alert = builder.create();
-
-        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        alert.show();
-        WindowManager.LayoutParams wmlp = alert.getWindow().getAttributes();
-        wmlp.width = sWidth;
-        wmlp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-        //wmlp.height = sHeight;
-        alert.getWindow().setAttributes(wmlp);
-
         Coord c = new Coord(e.getX(), e.getY());
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE:
