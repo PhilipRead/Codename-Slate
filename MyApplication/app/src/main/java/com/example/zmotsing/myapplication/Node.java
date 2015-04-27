@@ -18,9 +18,14 @@ public abstract class Node {
     protected int AddToLine;
     protected float LBound, RBound, UBound, DBound;
 
+    protected static int nextID = 0;
+    private int id;
+
     public Node(Coord c) {
         co = c;
         Z = 0f;
+        id = nextID;
+        ++nextID;
 
     }
 
@@ -54,4 +59,6 @@ public abstract class Node {
     public  void draw(GL10 gl){};
 
     public void drawPressed(GL10 gl) {};
+
+    public int getID() { return id; }
 }
