@@ -216,8 +216,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
-    public void getOutput() {
-        String curOutput = BackendLogic.printRegister();
+    public void getOutput(int nodeID) {
+        String curOutput = BackendLogic.printOutputNode(nodeID);
 
         textView.append(curOutput + "\n");
 

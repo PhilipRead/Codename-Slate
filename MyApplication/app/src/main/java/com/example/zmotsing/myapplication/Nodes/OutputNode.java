@@ -24,7 +24,7 @@ public class OutputNode extends Node {
     {
         Log.w("NODEACTION", "OUTPUT");
         MyGLRenderer.Tn.stop();
-        SV.getOutput();
+        SV.getOutput(this.getID());
     }
 
     @Override

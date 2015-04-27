@@ -26,7 +26,7 @@ public class OutputNode extends BackendNode
 
     public String getValue()
     {
-        if(boundNode == null)
+        if(boundNode != null)
         {
             return boundNode.getStringValue();
         }

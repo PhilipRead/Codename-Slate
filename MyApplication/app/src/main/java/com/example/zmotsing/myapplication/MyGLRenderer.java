@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.example.zmotsing.myapplication.Backend.BackendLogic;
 import com.example.zmotsing.myapplication.Buttons.IfButton;
 import com.example.zmotsing.myapplication.Buttons.InputButton;
 import com.example.zmotsing.myapplication.Buttons.OutputButton;
@@ -443,6 +444,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 case OUTPUT:
                     n = new OutputNode(new Coord(x, y));
 
+                    final int nID = n.getID();
                     tempBuffer = "";
                     AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
                     final TextView textView = new TextView(myContext);
@@ -461,7 +463,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                    {
                                        if(keyCode == KeyEvent.KEYCODE_ENTER)
                                        {
-                                           //call Zachs output binder
+                                           BackendLogic.initializeOutputNode(nID, tempBuffer);
                                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
                                            dialog.dismiss();
