@@ -6,23 +6,29 @@ package com.example.zmotsing.myapplication.Backend;
 public class OutputNode extends BackendNode
 {
     String text;
+    VariableNode boundNode;
 
-    OutputNode(String id)
+    OutputNode(int id)
     {
         super(id);
+        boundNode = null;
     }
 
-    public void setText(String t)
+    public void setValue(String t)
     {
         text = t;
     }
 
-    public String getText()
+    public void bind(VariableNode node)
     {
-        if(text == "REG_VAL")
+        boundNode = node;
+    }
+
+    public String getValue()
+    {
+        if(boundNode == null)
         {
-            InputNode node = (InputNode)BackendLogic.findNode("0");
-            return node.getValue();
+            return boundNode.getStringValue();
         }
 
         return text;
