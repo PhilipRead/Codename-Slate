@@ -1,13 +1,21 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.example.zmotsing.myapplication.Buttons.IfButton;
 import com.example.zmotsing.myapplication.Buttons.InputButton;
@@ -19,6 +27,7 @@ import com.example.zmotsing.myapplication.Nodes.OutputNode;
 import com.example.zmotsing.myapplication.Nodes.TravelingNode;
 
 import java.nio.FloatBuffer;
+import java.security.Key;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -417,9 +426,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
 
-
+    private static String tempBuffer;
 
     public static void addControlPoints(float x, float y) {
+
 
         Node n = null;
         if(nodeTypeCreate != null)
@@ -432,6 +442,64 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     break;
                 case OUTPUT:
                     n = new OutputNode(new Coord(x, y));
+
+                    tempBuffer = "";
+                    AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                    final TextView textView = new TextView(myContext);
+                    textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                        }
+                    });
+                    builder.setView(textView)
+                           .setCancelable(false)
+                           .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                               @Override
+                               public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                   if(event.getAction() == KeyEvent.ACTION_UP)
+                                   {
+                                       if(keyCode == KeyEvent.KEYCODE_ENTER)
+                                       {
+                                           //call Zachs output binder
+                                           ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+                                           dialog.dismiss();
+
+                                           return true;
+                                       }
+                                       else if(keyCode == KeyEvent.KEYCODE_DEL)
+                                       {
+                                           int bufLength = tempBuffer.length();
+
+                                           if(bufLength > 0)
+                                           {
+                                               tempBuffer = tempBuffer.substring(0, bufLength - 1);
+
+                                               CharSequence tempTxt = textView.getText();
+                                               CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                               textView.setText(newTxt);
+                                           }
+
+                                           return true;
+                                       }
+
+                                       char tempChar = (char) event.getUnicodeChar();
+                                       textView.append(tempChar + "");
+                                       tempBuffer += tempChar;
+                                       return true;
+                                   }
+                                   return false;
+                               }
+                           });
+
+                    AlertDialog alert = builder.create();
+                    alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+                    alert.show();
+                    alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                            |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
                     break;
                 case IF:
                    // n = new OutputNode(new Coord(x, y));
