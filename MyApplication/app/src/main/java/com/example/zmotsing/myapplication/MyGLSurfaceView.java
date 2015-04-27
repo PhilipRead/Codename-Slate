@@ -8,11 +8,13 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.text.Editable;
 import android.text.method.KeyListener;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -26,6 +28,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.zmotsing.myapplication.Backend.BackendLogic;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static com.example.zmotsing.myapplication.MyGLRenderer.*;
 
@@ -69,6 +74,22 @@ public class MyGLSurfaceView extends GLSurfaceView {
         textView.setPadding(2,0,2,0);
         textView.setTextColor(Color.GREEN);
         textView.setTextSize(10);
+        textView.setVerticalScrollBarEnabled(true);
+        textView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+
+        TypedArray a = textView.getContext().getTheme().obtainStyledAttributes(new int[0]);
+        try {
+            Method initializeScrollbars = android.view.View.class.getDeclaredMethod("initializeScrollbars", TypedArray.class);
+            initializeScrollbars.invoke(this, a);
+
+        }catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+            e.printStackTrace();
+        }
+        a.recycle();
+
+
+
 
         builder.setCancelable(false)
                 .setView(textView)
@@ -189,6 +210,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
     public void getInput() {
+        textView.append("> ");
 
         inputBuffer = "";
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
