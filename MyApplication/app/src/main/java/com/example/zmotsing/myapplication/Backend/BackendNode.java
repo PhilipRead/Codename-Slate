@@ -8,9 +8,9 @@ public class BackendNode
 {
     private int id;
 
-    BackendNode(String i)
+    BackendNode(int i)
     {
-        id = Integer.parseInt(i);
+        id = i;
     }
 
     int getId()

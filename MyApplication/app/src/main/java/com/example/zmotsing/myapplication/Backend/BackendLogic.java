@@ -10,12 +10,12 @@ public class BackendLogic
     private static CopyOnWriteArrayList<BackendNode> logicNodes = new CopyOnWriteArrayList<>();
 
 // General Methods
-    public static BackendNode findNode(String id)
+    public static BackendNode findNode(int id)
     {
         BackendNode node = null;
         for (BackendNode nd : logicNodes)
         {
-            if (nd.getId() == Integer.parseInt(id))
+            if (nd.getId() == id)
             {
                 node = nd;
                 break;
@@ -25,100 +25,95 @@ public class BackendLogic
         return node;
     }
 
-    public static boolean addNode(String id, String type)
-    {
-        switch(type)
-        {
-            case "input":
-                InputNode inpNode = new InputNode(id);
-                logicNodes.add(inpNode);
-                break;
-            case "output":
-                OutputNode outNode = new OutputNode(id);
-                logicNodes.add(outNode);
-                break;
-            case "ifelse":
-                IfElseNode ifElseNode = new IfElseNode(id);
-                logicNodes.add(ifElseNode);
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
 // Register Methods
     public static void backendInitialize()
     {
-        addNode("0", "input");
-        initializeInputNode("0", "REG_VAL", "");
-        addNode("1", "output");
-        initializeOutputNode("1", "REG_VAL");
+        initializeVariableNode(0, "REG_VAL", "");
+        initializeOutputNode(1, "");
+        bindOutputNode(1, 0);
     }
 
     public static boolean updateRegister(String value)
     {
-        updateInputNode("0", "", value);
-        return true;
+        return updateVariableNode(0, value);
     }
 
     public static String printRegister()
     {
-        OutputNode node = (OutputNode)findNode("1");
-        return node.getText();
+        return printOutputNode(1);
     }
 
 // Input Nodes
-    public static void initializeInputNode(String id, String name, String value)
+    public static void initializeVariableNode(int id, String name, String value)
     {
-        InputNode node = (InputNode)findNode(id);
+        VariableNode node = new VariableNode(id);
         node.Initialize(name, value);
+        logicNodes.add(node);
     }
 
-    public static void updateInputNode(String id, String operation, String value)
+    public static void initializeVariableNode(int id, String name, double value)
     {
-        InputNode node = (InputNode)findNode(id);
+        VariableNode node = new VariableNode(id);
+        node.Initialize(name, value);
+        logicNodes.add(node);
+    }
 
-        try
-        {
-            int intValue = Integer.parseInt(value);
+    public static boolean updateVariableNode(int id, String value)
+    {
+        BackendNode backNode = findNode(id);
 
-            switch (operation) {
-                case "+":
-                    node.setIntValue(node.getIntValue() + intValue);
-                    break;
-                case "-":
-                    node.setIntValue(node.getIntValue() - intValue);
-                    break;
-                case "*":
-                    node.setIntValue(node.getIntValue() * intValue);
-                    break;
-                case "/":
-                    node.setIntValue(node.getIntValue() / intValue);
-                    break;
-                default:
-                    node.setIntValue(intValue);
-            }
-        }
-        catch(NumberFormatException e)
+        if(!(backNode instanceof VariableNode))
         {
-            switch(operation)
-            {
-                case "+":
-                    node.setValue(node.getValue() + value);
-                    break;
-                default:
-                    node.setValue(value);
-            }
+            return false;
         }
+
+        VariableNode varNode = (VariableNode)backNode;
+        return varNode.setValue(value);
+    }
+
+    public static boolean updateVariableNode(int id, double value)
+    {
+        BackendNode backNode = findNode(id);
+
+        if(!(backNode instanceof VariableNode))
+        {
+            return false;
+        }
+
+        VariableNode varNode = (VariableNode)backNode;
+        return varNode.setValue(value);
     }
 
 // Output Nodes
-    public static void initializeOutputNode(String id, String text)
+    public static void initializeOutputNode(int id, String text)
+    {
+        OutputNode node = new OutputNode(id);
+        node.setValue(text);
+        logicNodes.add(node);
+    }
+
+    public static boolean bindOutputNode(int outId, int varId)
+    {
+        BackendNode outBackNode = findNode(outId);
+        BackendNode varBackNode = findNode(varId);
+
+        if(!(outBackNode instanceof OutputNode) || !(varBackNode instanceof VariableNode))
+        {
+            return false;
+        }
+
+        OutputNode outNode = (OutputNode)outBackNode;
+        VariableNode varNode = (VariableNode)varBackNode;
+
+        outNode.bind(varNode);
+
+        return true;
+    }
+
+    public static String printOutputNode(int id)
     {
         OutputNode node = (OutputNode)findNode(id);
-        node.setText(text);
+        return node.getValue();
     }
 
 // If-Else Nodes
