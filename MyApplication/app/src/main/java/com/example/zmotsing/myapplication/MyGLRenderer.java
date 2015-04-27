@@ -4,12 +4,14 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -448,6 +450,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     tempBuffer = "";
                     AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
                     final TextView textView = new TextView(myContext);
+
+                    textView.setHeight(50);
+
+                    textView.setTextColor(Color.GREEN);
+                    textView.setBackgroundColor(Color.BLACK);
                     textView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -502,6 +509,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     alert.show();
                     alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                             |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+
                     break;
                 case IF:
                    // n = new OutputNode(new Coord(x, y));
