@@ -56,43 +56,38 @@ public class MyGLSurfaceView extends GLSurfaceView {
         BackendLogic.backendInitialize();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mycontext);
-        TextView textView = new TextView(mycontext);
+        final TextView textView = new TextView(mycontext);
         int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
         int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
 
         textView.setHeight(sHeight/2 - 20);
         textView.setCursorVisible(true);
         textView.setBackgroundColor(Color.BLACK);
-        textView.setPadding(2,0,0,0);
+        textView.setPadding(2,0,2,0);
         textView.setTextColor(Color.GREEN);
+        textView.setTextSize(10);
 
         builder.setCancelable(false)
                 .setView(textView)
                 .setOnKeyListener(new DialogInterface.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent msg) {
-                        if(msg.getAction() == KeyEvent.ACTION_UP) {
-                            if (keyCode >= 29 && keyCode <= 54) //Letter
+                        if(msg.getAction() == KeyEvent.ACTION_UP)
+                        {
+                            if (keyCode == KeyEvent.KEYCODE_ENTER)
                             {
-                                char tempChar = (char) msg.getUnicodeChar(1);
-                                inputTxtToLoad.add("" + tempChar);
-                                inputBuffer += tempChar;
-                                return true;
-                            }
-                            else if (keyCode >= 7 && keyCode <= 16 && msg.getMetaState() == 0) //Number
-                            {
-                                char tempNum = (char) msg.getUnicodeChar();
-                                inputTxtToLoad.add("" + tempNum);
-                                inputBuffer += tempNum;
-                                return true;
-                            }
-                            else if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                textView.append("\n");
                                 ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                                 BackendLogic.updateRegister(inputBuffer);
 
                                 Tn.start();
                                 return true;
                             }
+
+                            char tempChar = (char) msg.getUnicodeChar();
+                            textView.append(tempChar + "");
+                            inputBuffer += tempChar;
+                            return true;
                         }
                         return false;
                     }
