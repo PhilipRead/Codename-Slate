@@ -86,6 +86,21 @@ public class MyGLSurfaceView extends GLSurfaceView {
                                 Tn.start();
                                 return true;
                             }
+                            else if(keyCode == KeyEvent.KEYCODE_DEL)
+                            {
+                                int inputLength = inputBuffer.length();
+
+                                if(inputLength > 0)
+                                {
+                                    inputBuffer = inputBuffer.substring(0, inputLength - 1);
+
+                                    CharSequence tempTxt = textView.getText();
+                                    CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                    textView.setText(newTxt);
+                                }
+
+                                return true;
+                            }
 
                             char tempChar = (char) msg.getUnicodeChar();
                             textView.append(tempChar + "");
