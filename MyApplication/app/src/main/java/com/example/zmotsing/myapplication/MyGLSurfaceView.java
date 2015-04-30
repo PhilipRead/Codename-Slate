@@ -1,18 +1,26 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,44 +55,68 @@ public class MyGLSurfaceView extends GLSurfaceView {
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         BackendLogic.backendInitialize();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        TextView textView = new TextView(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mycontext);
+        TextView textView = new TextView(mycontext);
         int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
         int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
 
-        //textView.setMinWidth(0);
-        // textView.setMinEms(0);
-        textView.setHeight(sHeight);
-        // textView.setWidth(10);
-
-        //LinearLayout.LayoutParams tempParams = new LinearLayout.LayoutParams(10, sHeight);
-        //textView.setLayoutParams(tempParams);
-        //textView.setText("TEST");
+        textView.setHeight(sHeight/2 - 20);
+        textView.setCursorVisible(true);
+        textView.setBackgroundColor(Color.BLACK);
+        textView.setPadding(2,0,0,0);
+        textView.setTextColor(Color.GREEN);
 
         builder.setCancelable(false)
-                .setView(textView);
-                /*.setNegativeButton("I wish I was", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }*/
+                .setView(textView)
+                .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent msg) {
+                        if(msg.getAction() == KeyEvent.ACTION_UP) {
+                            if (keyCode >= 29 && keyCode <= 54) //Letter
+                            {
+                                char tempChar = (char) msg.getUnicodeChar(1);
+                                inputTxtToLoad.add("" + tempChar);
+                                inputBuffer += tempChar;
+                                return true;
+                            }
+                            else if (keyCode >= 7 && keyCode <= 16 && msg.getMetaState() == 0) //Number
+                            {
+                                char tempNum = (char) msg.getUnicodeChar();
+                                inputTxtToLoad.add("" + tempNum);
+                                inputBuffer += tempNum;
+                                return true;
+                            }
+                            else if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                                BackendLogic.updateRegister(inputBuffer);
+
+                                Tn.start();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
+
         AlertDialog alert = builder.create();
 
 
         alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                                   WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         alert.show();
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         WindowManager.LayoutParams wmlp = alert.getWindow().getAttributes();
         wmlp.width = sWidth;
         wmlp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-        //wmlp.height = sHeight;
         alert.getWindow().setAttributes(wmlp);
     }
 
 
     boolean swipeMode = true;
     boolean pinchMode = false;
-    boolean inputMode = false;
+
 
     String inputBuffer;
 
@@ -143,67 +175,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent msg) {
-
-        if(inputMode)
-        {
-            if(keyCode >= 29 && keyCode <= 54) //Letter
-            {
-                char tempChar = (char)msg.getUnicodeChar(1);
-                inputTxtToLoad.add("" + tempChar);
-                inputBuffer += tempChar;
-            }
-            else if(keyCode >= 7 && keyCode <= 16 && msg.getMetaState() == 0) //Number
-            {
-                char tempNum = (char)msg.getUnicodeChar();
-                Log.w("NUMBER", "" + tempNum);
-                inputTxtToLoad.add("" + tempNum);
-                inputBuffer += tempNum;
-            }
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            if(inputMode)
-            {
-                inputMode = false;
-                ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.getWindowToken(), 0);
-
-                BackendLogic.updateRegister(inputBuffer);
-
-                Tn.start();
-            }
-            return true;
-        }
-
-        return false;
-    }
-
     public void getInput() {
 
-        inputMode = true;
         inputBuffer = "";
         inputTxt.clear();
-        ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(this, InputMethodManager.RESULT_SHOWN);
+        ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
-    int testNum = 0;
     public void getOutput() {
 
 
