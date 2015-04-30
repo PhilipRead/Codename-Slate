@@ -31,6 +31,8 @@ import com.example.zmotsing.myapplication.Backend.BackendLogic;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.example.zmotsing.myapplication.MyGLRenderer.*;
 
@@ -149,8 +151,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
 
     boolean swipeMode = true;
+    boolean nodeMoveMode = false;
     boolean pinchMode = false;
 
+    Timer moveNodeTimer;
 
     String inputBuffer;
 
@@ -164,6 +168,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 if(swipeMode) {
                     actionMoved = true;
                 }
+                else if(nodeMoveMode) {
+                    nodeMoved = true;
+                }
                 else if(pinchMode) {
                     pointerMovedCoord = new Coord(e.getX(1), e.getY(1));
                     pinchMoved = true;
@@ -171,6 +178,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
                 return true;
             case MotionEvent.ACTION_DOWN:
+                moveNodeTimer = new Timer();
+                moveNodeTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        swipeMode = false;
+                        nodeMoveMode = true;
+                    }
+                }, 1000);
+
                 actionDownCoord = c;
                 action_flag = true;
                 TouchedDown = true;
@@ -204,6 +220,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
                     action_flag = false;
                     curPressed = null;
                 }
+                moveNodeTimer.cancel();
+                moveNodeTimer.purge();
+                nodeMoveMode = false;
+                swipeMode = true;
         }
 
         return true;
