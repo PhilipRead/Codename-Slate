@@ -14,7 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class PlayButton extends Node {
 
-    public static boolean paused = false;
+    public static boolean paused = true;
 
     public PlayButton(Coord c) {
         super(c);

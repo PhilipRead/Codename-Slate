@@ -21,15 +21,8 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.zmotsing.myapplication.Backend.BackendLogic;
-import com.example.zmotsing.myapplication.Buttons.IfButton;
-import com.example.zmotsing.myapplication.Buttons.InputButton;
-import com.example.zmotsing.myapplication.Buttons.OutputButton;
-import com.example.zmotsing.myapplication.Buttons.PlayButton;
-import com.example.zmotsing.myapplication.Nodes.BackgroundNode;
-import com.example.zmotsing.myapplication.Nodes.InputNode;
-import com.example.zmotsing.myapplication.Nodes.OutputNode;
-import com.example.zmotsing.myapplication.Nodes.TravelingNode;
-
+import com.example.zmotsing.myapplication.Buttons.*;
+import com.example.zmotsing.myapplication.Nodes.*;
 import java.nio.FloatBuffer;
 import java.security.Key;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -97,7 +90,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static Node nodeWaitingBind;
     float viewwidth;
     float viewheight;
-
     public static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
     public static TextManager inputTxt = new TextManager(1.0f, 0.0f, 0.5f, 0.0f);
@@ -158,10 +150,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //Load in all graphics for new nodes
         boolean RedrawLine = false;
         for (Node element : NodesToLoad) {
+            boolean currhasEndNode = (NodeList.size() > 1);
 
             setupGraphic(gl,element,false);
-            NodeList.add(element);
-            controlPoints.add(element.getCoord());
+            if (currhasEndNode)
+            {
+                NodeList.add(NodeList.size()-1,element);
+                controlPoints.add(controlPoints.size()-1,element.getCoord());
+            }
+            else
+            {
+                NodeList.add(element);
+                controlPoints.add(element.getCoord());
+            }
             RedrawLine = true;
 
         }
@@ -374,10 +375,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
-//        nodeTypeCreate = NodeType.OUTPUT;
-//        addControlPoints(200f, 200f);
-//        nodeTypeCreate = NodeType.OUTPUT;
-//        addControlPoints(100f, 200f);
+        nodeTypeCreate = NodeType.START;
+        addControlPoints(200f, 200f);
+        nodeTypeCreate = NodeType.END;
+        addControlPoints(400f, 200f);
 //        nodeTypeCreate = NodeType.OUTPUT;
 //        addControlPoints(200f, 100f);
 //        nodeTypeCreate = NodeType.OUTPUT;
@@ -428,7 +429,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Tn.setSprite();
         Tn.spr.loadGLTexture(gl, myContext);
-        Tn.start();
+        //Tn.start();
         //square.loadGLTexture(gl, myContext);
 
 
@@ -468,6 +469,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     bindableNodes.add(n);
                     break;
                 case OUTPUT:
+                    //region OutputNode Fold
                     n = new OutputNode(new Coord(x, y));
 
                     final Node curNode = n;
@@ -549,8 +551,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     alert.show();
 
                     break;
+                //endregion
                 case IF:
                    // n = new OutputNode(new Coord(x, y));
+                    break;
+                case START:
+                    n = new StartNode(new Coord(x, y));
+                    break;
+                case END:
+                    n = new EndNode(new Coord(x, y));
                     break;
             }
             nodeTypeCreate = null;
@@ -559,6 +568,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         {
             return;
         }
+
         NodesToLoad.add(n);
     }
 
