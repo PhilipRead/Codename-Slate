@@ -39,6 +39,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
     Context mycontext;
     MyGLRenderer r = new MyGLRenderer();
 
+    AlertDialog.Builder builder;
+    TextView textView;
+
     public MyGLSurfaceView(Context context) {
         super(context);
         r.setContext(context);
@@ -55,11 +58,11 @@ public class MyGLSurfaceView extends GLSurfaceView {
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         BackendLogic.backendInitialize();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mycontext);
-        final TextView textView = new TextView(mycontext);
+        builder = new AlertDialog.Builder(mycontext);
         int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
         int sWidth = mycontext.getResources().getDisplayMetrics().widthPixels / 4;
 
+        textView = new TextView(mycontext);
         textView.setHeight(sHeight/2 - 20);
         textView.setCursorVisible(true);
         textView.setBackgroundColor(Color.BLACK);
@@ -173,16 +176,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public void getInput() {
 
         inputBuffer = "";
-        inputTxt.clear();
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
     public void getOutput() {
-
-
         String curOutput = BackendLogic.printRegister();
-        outputTxt.clear();
-        outputTxtToLoad.add(curOutput);
+
+        textView.append(curOutput + "\n");
 
         Tn.start();
     }
