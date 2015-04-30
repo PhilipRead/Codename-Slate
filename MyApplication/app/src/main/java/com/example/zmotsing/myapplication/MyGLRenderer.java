@@ -10,6 +10,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.DialogPreference;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -36,6 +37,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
+
+import static java.security.AccessController.getContext;
 
 
 /**
@@ -76,6 +79,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static Coord TouchDownCoord;
     public static boolean TouchedDown;
     public static boolean Touched;
+    public static boolean bindMode;
     public static Coord actionDownCoord;
     public static Coord actionDownCoordGL;
     public static Coord pointerDownCoord;
@@ -89,8 +93,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean actionMoved;
     public static boolean pointerDown;
     public static boolean pinchMoved;
-    public static Node n;
     public static Node curPressed;
+    public static Node nodeWaitingBind;
     float viewwidth;
     float viewheight;
 
@@ -105,6 +109,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<String> inputTxtToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<String> outputTxtToLoad = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> bindableNodes = new CopyOnWriteArrayList<>();
 
     private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
     {
@@ -288,8 +293,25 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
         if (Touched) {
             Touched = false;
-            Node n = objectTouched(GetWorldCoords(gl,TouchEventCoord));
-            if(n!=null){n.action(surfaceview);}
+
+            if(bindMode)
+            {
+                switchBackToFrustum(gl);
+                Node bindNode = nodeToBind(GetWorldCoords(gl, TouchEventCoord));
+                switchToOrtho(gl);
+                if(bindNode != null)
+                {
+                    bindMode = false;
+                }
+
+            }
+            else
+            {
+                Node n = objectTouched(GetWorldCoords(gl, TouchEventCoord));
+                if (n != null) {
+                    n.action(surfaceview);
+                }
+            }
 
         }
 
@@ -442,74 +464,89 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 case INPUT:
 
                     n = new InputNode(new Coord(x, y));
+
+                    bindableNodes.add(n);
                     break;
                 case OUTPUT:
                     n = new OutputNode(new Coord(x, y));
 
-                    final int nID = n.getID();
-                    tempBuffer = "";
+                    final Node curNode = n;
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
-                    final TextView textView = new TextView(myContext);
-
-                    textView.setHeight(50);
-
-                    textView.setTextColor(Color.GREEN);
-                    textView.setBackgroundColor(Color.BLACK);
-                    textView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                    builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            nodeWaitingBind = curNode;
+                            bindMode = true;
+                            dialog.cancel();
                         }
                     });
-                    builder.setView(textView)
-                           .setCancelable(false)
-                           .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                               @Override
-                               public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                                   if(event.getAction() == KeyEvent.ACTION_UP)
-                                   {
-                                       if(keyCode == KeyEvent.KEYCODE_ENTER)
-                                       {
-                                           BackendLogic.initializeOutputNode(nID, tempBuffer);
-                                           ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                    builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            final int nID = curNode.getID();
+                            tempBuffer = "";
+                            AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                            final TextView textView = new TextView(myContext);
 
-                                           dialog.dismiss();
+                            textView.setHeight(50);
 
-                                           return true;
-                                       }
-                                       else if(keyCode == KeyEvent.KEYCODE_DEL)
-                                       {
-                                           int bufLength = tempBuffer.length();
+                            textView.setTextColor(Color.GREEN);
+                            textView.setBackgroundColor(Color.BLACK);
+                            builder.setView(textView)
+                                    .setCancelable(false)
+                                    .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                                        @Override
+                                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                            if (event.getAction() == KeyEvent.ACTION_UP) {
+                                                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                                    BackendLogic.initializeOutputNode(nID, tempBuffer);
+                                                    ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
-                                           if(bufLength > 0)
-                                           {
-                                               tempBuffer = tempBuffer.substring(0, bufLength - 1);
+                                                    dialog.dismiss();
 
-                                               CharSequence tempTxt = textView.getText();
-                                               CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
-                                               textView.setText(newTxt);
-                                           }
+                                                    return true;
+                                                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                                                    int bufLength = tempBuffer.length();
 
-                                           return true;
-                                       }
+                                                    if (bufLength > 0) {
+                                                        tempBuffer = tempBuffer.substring(0, bufLength - 1);
 
-                                       char tempChar = (char) event.getUnicodeChar();
-                                       textView.append(tempChar + "");
-                                       tempBuffer += tempChar;
-                                       return true;
-                                   }
-                                   return false;
-                               }
-                           });
+                                                        CharSequence tempTxt = textView.getText();
+                                                        CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                                        textView.setText(newTxt);
+                                                    }
+
+                                                    return true;
+                                                }
+
+                                                char tempChar = (char) event.getUnicodeChar();
+                                                textView.append(tempChar + "");
+                                                tempBuffer += tempChar;
+                                                return true;
+                                            }
+                                            return false;
+                                        }
+                                    });
+
+                            AlertDialog alert = builder.create();
+                            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                            alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+                            alert.show();
+
+                            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                                    | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                            dialog.cancel();
+                        }
+
+                    });
+
 
                     AlertDialog alert = builder.create();
-                    alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                    alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
                     alert.show();
-                    alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
 
                     break;
                 case IF:
@@ -599,5 +636,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void setContext(Context context) {
         myContext = context;
     }
+
+    public Node nodeToBind(Coord glCoord)
+    {
+        float x = glCoord.X;
+        float y = glCoord.Y;
+        for (int j = bindableNodes.size() - 1; j >= 0; j--) {
+            Node c = bindableNodes.get(j);
+            if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
+                Log.w("Node dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
+                Log.w("Node TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
+                return c;
+            }
+        }
+
+        return null;
+    }
+
 
 }
