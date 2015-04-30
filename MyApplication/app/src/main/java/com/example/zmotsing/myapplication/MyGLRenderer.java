@@ -84,6 +84,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static double spacing;
     public static boolean actionDown;
     public static boolean actionMoved;
+    public static boolean nodeMoved;
     public static boolean pointerDown;
     public static boolean pinchMoved;
     public static Node curPressed;
@@ -225,6 +226,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             translateY(actionMovedCoordGL.Y - actionDownCoordGL.Y);
 
             actionDownCoordGL = actionMovedCoordGL;
+        }else if(nodeMoved){
+            nodeMoved = false;
+            actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
+            Node tempNode = getNodeTouched(actionMovedCoordGL, NodeList, false);
+
+            if(tempNode != null) {
+                Log.w("COORDS:---------  ", "(" + actionMovedCoordGL.X + ","+ actionMovedCoordGL.Y + ")");
+
+                tempNode.setCoord(actionMovedCoordGL);
+            }
+
+
         }else if(pinchMoved){
             pinchMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
@@ -287,7 +300,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         if (TouchedDown) {
             TouchedDown = false;
-            Node n = objectTouched(GetWorldCoords(gl,TouchDownCoord));
+            Node n = getNodeTouched(GetWorldCoords(gl,TouchDownCoord), ButtonList, true);
 
             curPressed = n;
 
@@ -298,7 +311,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             if(bindMode)
             {
                 switchBackToFrustum(gl);
-                Node bindNode = nodeToBind(GetWorldCoords(gl, TouchEventCoord));
+                Node bindNode = getNodeTouched(GetWorldCoords(gl, TouchEventCoord), bindableNodes, false);
                 switchToOrtho(gl);
                 if(bindNode != null)
                 {
@@ -308,7 +321,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
             else
             {
-                Node n = objectTouched(GetWorldCoords(gl, TouchEventCoord));
+                Node n = getNodeTouched(GetWorldCoords(gl,TouchDownCoord), ButtonList, true);
                 if (n != null) {
                     n.action(surfaceview);
                 }
@@ -628,31 +641,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     }
 
-    public Node objectTouched(Coord glCoord) {
-        float x = glCoord.X/4;
-        float y = glCoord.Y/4;
-        for (int j = ButtonList.size() - 1; j >= 0; j--) {
-            Node c = ButtonList.get(j);
-            if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
-                Log.w("Button dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
-                Log.w("Button TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
-                return c;
-            }
-        }
-
-        return null;
-    }
-
     public void setContext(Context context) {
         myContext = context;
     }
 
-    public Node nodeToBind(Coord glCoord)
+    public Node getNodeTouched(Coord glCoord, CopyOnWriteArrayList<Node> nList, boolean isOrtho)
     {
-        float x = glCoord.X;
-        float y = glCoord.Y;
-        for (int j = bindableNodes.size() - 1; j >= 0; j--) {
-            Node c = bindableNodes.get(j);
+        int offset = isOrtho? 4:1;
+        float x = glCoord.X/offset;
+        float y = glCoord.Y/offset;
+        for (int j = nList.size() - 1; j >= 0; j--) {
+            Node c = nList.get(j);
             if (x > c.LBound && x < c.RBound && y < c.UBound && y > c.DBound) {
                 Log.w("Node dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
                 Log.w("Node TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
