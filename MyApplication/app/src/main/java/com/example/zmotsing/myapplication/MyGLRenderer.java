@@ -527,19 +527,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     //region OutputNode Fold
                     n = new OutputNode(new Coord(x, y));
 
-                    final Node curNode = n;
+                    final Node curNodeOut = n;
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
-                    builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+                    AlertDialog.Builder builderOut = new AlertDialog.Builder(myContext);
+                    builderOut.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            nodeWaitingBind = curNode;
+                            nodeWaitingBind = curNodeOut;
                             bindMode = true;
                             dialog.cancel();
                         }
                     });
-                    builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+                    builderOut.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            final int nID = curNode.getID();
+                            final int nID = curNodeOut.getID();
                             tempBuffer = "";
                             AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
                             final TextView textView = new TextView(myContext);
@@ -602,8 +602,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     });
 
 
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    AlertDialog alertOut = builderOut.create();
+                    alertOut.show();
 
                     break;
                 //endregion
@@ -617,8 +617,87 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     n = new IfNode(new Coord(x, y));
                     break;
                 case STORAGE:
+                    //region StorageNode Fold
                     n = new StorageNode(new Coord(x, y));
+                    final Node curNodeStr = n;
+
+                    AlertDialog.Builder builderStr = new AlertDialog.Builder(myContext);
+                    builderStr.setPositiveButton("Set Empty", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //Create new node in backend with a null value
+                            dialog.cancel();
+                        }
+                    });
+                    builderStr.setNegativeButton("Set Initial Value", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            final int nID = curNodeStr.getID();
+                            tempBuffer = "";
+                            AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                            final TextView textView = new TextView(myContext);
+
+                            textView.setHeight(50);
+
+                            textView.setTextColor(Color.GREEN);
+                            textView.setBackgroundColor(Color.BLACK);
+                            builder.setView(textView)
+                                    .setCancelable(false)
+                                    .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                                        @Override
+                                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                            if (event.getAction() == KeyEvent.ACTION_UP) {
+                                                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                                    //BackendLogic.initializeOutputNode(nID, tempBuffer);
+                                                    //initialize storage node with initial value on backend.
+                                                    ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+                                                    dialog.dismiss();
+
+                                                    return true;
+                                                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                                                    int bufLength = tempBuffer.length();
+
+                                                    if (bufLength > 0) {
+                                                        tempBuffer = tempBuffer.substring(0, bufLength - 1);
+
+                                                        CharSequence tempTxt = textView.getText();
+                                                        CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                                        textView.setText(newTxt);
+                                                    }
+
+                                                    return true;
+                                                }
+
+                                                char tempChar = (char) event.getUnicodeChar();
+                                                textView.append(tempChar + "");
+                                                tempBuffer += tempChar;
+                                                return true;
+                                            }
+                                            return false;
+                                        }
+                                    });
+
+                            AlertDialog alert = builder.create();
+                            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                            alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+                            alert.show();
+
+                            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                                    | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                            dialog.cancel();
+                        }
+
+                    });
+
+
+                    AlertDialog alertStr = builderStr.create();
+                    alertStr.show();
                     break;
+                //endregion
             }
             nodeTypeCreate = null;
         }
