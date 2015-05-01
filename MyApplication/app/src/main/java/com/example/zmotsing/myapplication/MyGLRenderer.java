@@ -277,7 +277,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Bn.spr.draw(gl);
         switchBackToFrustum(gl);
 
-        gl.glTranslatef(transX, transY, transZ);
+        if(transY != 0 && transX != 0)
+        {
+            float tempX = transX;
+            float tempY = transY;
+            transX = transY = 0;
+            int i = 0;
+            for (Node element : NodeList) {
+                Coord co = element.getCoord();
+                co.X += tempX;
+                co.Y += tempY;
+                controlPoints.set(i,co);
+                element.setCoord(co);
+                i++;
+            }
+            RedrawLine = true;
+        }
+        gl.glTranslatef(0, 0, transZ);
 
 
         for (TextObject element : inputTxt.getTextList()) {
