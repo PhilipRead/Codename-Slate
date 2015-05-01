@@ -8,6 +8,8 @@ import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
 
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * Created by acowdrey on 4/27/15.
  */
@@ -41,7 +43,10 @@ public class IfNode extends Node {
 
     }
 
+    public void drawTruePath(GL10 gl)
+    {
 
+    }
     @Override
     public String getTitle() {
         return "if";

@@ -43,6 +43,7 @@ import static java.security.AccessController.getContext;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
+    //region Renderer Variables
     final Handler TnHandler = new Handler();
 
     private int[] Textures = new int[1]; //textures pointers
@@ -59,17 +60,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     static float transY;
     static float transZ = -4;
     public MyGLSurfaceView surfaceview;
-
-    /**
-     * Constructor to set the handed over context
-     */
-    public MyGLRenderer() {
-
-
-    }
-
-
-    public static LineStrip linestrip;
+    public MyGLRenderer() {}
+    public static LineStrip currentLineStrip;
+    public static LineStrip startLineStrip;
     public static Coord TouchEventCoord;
     public static Coord TouchDownCoord;
     public static boolean TouchedDown;
@@ -106,6 +99,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static CopyOnWriteArrayList<String> inputTxtToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<String> outputTxtToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> bindableNodes = new CopyOnWriteArrayList<>();
+    //endregion
 
     private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
     {
@@ -151,7 +145,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        //Load in all graphics for new nodes
+        //region Load in all graphics for new nodes
         for (Node element : NodesToLoad) {
             boolean currhasEndNode = (NodeList.size() > 1);
 
@@ -201,13 +195,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         outputTxtToLoad.clear();
+        //endregion
 
+        //region Redraw linestrip
         if (RedrawLine && controlPoints.size() > 2) {
-            linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
+            startLineStrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
             RedrawLine = false;
-            //objectTouched();
         }
+        //endregion
 
+        //region Touch Motion Detection Logic
         if(actionDown){
             actionDown = false;
             actionDownCoordGL = GetWorldCoords(gl, actionDownCoord);
@@ -274,22 +271,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         }
+        //endregion
 
         // Clears the screen and depth buffer.
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | //
-                GL10.GL_DEPTH_BUFFER_BIT);
-
-        // Draw our square.
-        // Translates 4 units into the screen.
-//        square.draw(gl);
-
-
-
-        switchToOrtho(gl);
-        Bn.spr.draw(gl);
-        switchBackToFrustum(gl);
-
+        //region Translation for swipe
         if(transY != 0 && transX != 0)
         {
             float tempX = transX;
@@ -306,8 +293,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
             RedrawLine = true;
         }
-        gl.glTranslatef(0, 0, transZ);
+        //endregion
 
+        //region Draw All Elements
+
+        switchToOrtho(gl);
+        Bn.spr.draw(gl);
+        switchBackToFrustum(gl);
+        gl.glTranslatef(0, 0, transZ);
 
         for (TextObject element : inputTxt.getTextList()) {
             element.spr.draw(gl);
@@ -318,19 +311,35 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         for (Node element : NodeList) {
+            if(element instanceof IfNode)
+            {
+
+            }
             element.spr.draw(gl);
         }
 
         //NodeList.get(0).spr.draw(gl);
-        if (linestrip != null) {
-            linestrip.draw(gl); // ( NEW )
+        if (startLineStrip != null) {
+            startLineStrip.draw(gl); // ( NEW )
 
         }
         Tn.spr.draw(gl);
 
         switchToOrtho(gl);
 
+        for (Node element : ButtonList) {
+            if(element == curPressed)
+            {
+                element.drawPressed(gl);
+            }
+            else
+            {
+                element.draw(gl);
+            }
+        }
+        //endregion
 
+        //region ButtonDown detection
         if (TouchedDown) {
             TouchedDown = false;
             Node n = getNodeTouched(GetWorldCoords(gl,TouchDownCoord), ButtonList, true);
@@ -338,6 +347,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             curPressed = n;
 
         }
+        //endregion
+
+        //region NodeBinding and ButtonPress Detection
         if (Touched) {
             Touched = false;
 
@@ -361,17 +373,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
 
         }
+        //endregion
 
-        for (Node element : ButtonList) {
-            if(element == curPressed)
-            {
-                element.drawPressed(gl);
-            }
-            else
-            {
-                element.draw(gl);
-            }
-        }
         switchBackToFrustum(gl);
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
@@ -496,7 +499,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             controlPoints.add(c.getCoord());
         }
 
-        linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
+        startLineStrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
     }
 
 
@@ -600,14 +603,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                     break;
                 //endregion
-                case IF:
-                   // n = new OutputNode(new Coord(x, y));
-                    break;
                 case START:
                     n = new StartNode(new Coord(x, y));
                     break;
                 case END:
                     n = new EndNode(new Coord(x, y));
+                    break;
+                case IF:
+                    n = new IfNode(new Coord(x, y));
                     break;
             }
             nodeTypeCreate = null;

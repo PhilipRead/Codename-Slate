@@ -32,7 +32,7 @@ public class TravelingNode extends Node {
     @Override
     public void action(MyGLSurfaceView SV)
     {
-        if((MyGLRenderer.linestrip!= null) && MyGLRenderer.linestrip.vertices.length > ArrayIndex)
+        if((MyGLRenderer.startLineStrip!= null) && MyGLRenderer.startLineStrip.vertices.length > ArrayIndex)
         {
 
 
@@ -41,8 +41,8 @@ public class TravelingNode extends Node {
             {
                 MyGLRenderer.NodeList.get(ArrayIndex/177).action(SV);
             }
-            float x = MyGLRenderer.linestrip.vertices[ArrayIndex];
-            float y = MyGLRenderer.linestrip.vertices[ArrayIndex + 1];
+            float x = MyGLRenderer.startLineStrip.vertices[ArrayIndex];
+            float y = MyGLRenderer.startLineStrip.vertices[ArrayIndex + 1];
             Coord c = new Coord(x, y);
             this.setCoord(c);
             spr.SetupSprite(R.drawable.travellingnode, x, y);

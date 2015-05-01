@@ -22,9 +22,9 @@ public class BackgroundNode extends Node {
 
     @Override
     public void action(MyGLSurfaceView SV) {
-        if (MyGLRenderer.linestrip.vertices.length > ArrayIndex) {
-            float x = MyGLRenderer.linestrip.vertices[ArrayIndex];
-            float y = MyGLRenderer.linestrip.vertices[ArrayIndex + 1];
+        if (MyGLRenderer.startLineStrip.vertices.length > ArrayIndex) {
+            float x = MyGLRenderer.startLineStrip.vertices[ArrayIndex];
+            float y = MyGLRenderer.startLineStrip.vertices[ArrayIndex + 1];
             Coord c = new Coord(x, y);
             this.setCoord(c);
             spr.SetupSprite(R.drawable.background, x, y);
