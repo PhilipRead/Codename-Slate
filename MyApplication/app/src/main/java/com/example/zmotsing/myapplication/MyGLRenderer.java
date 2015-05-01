@@ -25,6 +25,8 @@ import com.example.zmotsing.myapplication.Buttons.*;
 import com.example.zmotsing.myapplication.Nodes.*;
 import java.nio.FloatBuffer;
 import java.security.Key;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -209,6 +211,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         if(actionDown){
             actionDown = false;
             actionDownCoordGL = GetWorldCoords(gl, actionDownCoord);
+
+            if(getNodeTouched(actionDownCoordGL, NodeList, false) != null) {
+                MyGLSurfaceView.moveNodeTimer = new Timer();
+                MyGLSurfaceView.moveNodeTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        MyGLSurfaceView.swipeMode = false;
+                        MyGLSurfaceView.nodeMoveMode = true;
+                    }
+                }, 1000);
+            }
         }
 
         if(pointerDown){

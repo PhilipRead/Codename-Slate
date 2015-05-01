@@ -150,11 +150,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
-    boolean swipeMode = true;
-    boolean nodeMoveMode = false;
+    public static boolean swipeMode = true;
+    public static boolean nodeMoveMode = false;
     boolean pinchMode = false;
 
-    Timer moveNodeTimer;
+
+    public static Timer moveNodeTimer;
 
     String inputBuffer;
 
@@ -167,6 +168,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
                 if(swipeMode) {
                     actionMoved = true;
+                    if (moveNodeTimer != null) {
+                        if (Math.abs(c.X - actionDownCoord.X) > 5
+                                || Math.abs(c.Y - actionDownCoord.Y) > 5) {
+                            moveNodeTimer.cancel();
+                            moveNodeTimer.purge();
+                        }
+                    }
                 }
                 else if(nodeMoveMode) {
                     nodeMoved = true;
@@ -178,14 +186,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
                 return true;
             case MotionEvent.ACTION_DOWN:
-                moveNodeTimer = new Timer();
-                moveNodeTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        swipeMode = false;
-                        nodeMoveMode = true;
-                    }
-                }, 1000);
 
                 actionDownCoord = c;
                 action_flag = true;
@@ -220,8 +220,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
                     action_flag = false;
                     curPressed = null;
                 }
-                moveNodeTimer.cancel();
-                moveNodeTimer.purge();
+                if(moveNodeTimer != null) {
+                    moveNodeTimer.cancel();
+                    moveNodeTimer.purge();
+                }
                 nodeMoveMode = false;
                 swipeMode = true;
         }
