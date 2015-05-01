@@ -73,6 +73,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean TouchedDown;
     public static boolean Touched;
     public static boolean bindMode;
+    public static boolean RedrawLine;
     public static Coord actionDownCoord;
     public static Coord actionDownCoordGL;
     public static Coord pointerDownCoord;
@@ -149,7 +150,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
 
         //Load in all graphics for new nodes
-        boolean RedrawLine = false;
         for (Node element : NodesToLoad) {
             boolean currhasEndNode = (NodeList.size() > 1);
 
@@ -202,6 +202,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         if (RedrawLine && controlPoints.size() > 2) {
             linestrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
+            RedrawLine = false;
             //objectTouched();
         }
 
@@ -235,6 +236,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 Log.w("COORDS:---------  ", "(" + actionMovedCoordGL.X + ","+ actionMovedCoordGL.Y + ")");
 
                 tempNode.setCoord(actionMovedCoordGL);
+                RedrawLine = true;
             }
 
 
@@ -256,7 +258,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         }
-
 
         // Clears the screen and depth buffer.
 
@@ -387,6 +388,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
+
+        RedrawLine = false;
 
         nodeTypeCreate = NodeType.START;
         addControlPoints(200f, 200f);

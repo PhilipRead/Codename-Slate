@@ -43,6 +43,8 @@ public abstract class Node {
 
     public void setCoord(Coord c) {
         co = c;
+        if(spr != null)
+            spr.SetupSprite(drawableInt, c.X, c.Y);
     }
 
     abstract public void action(MyGLSurfaceView SV);
