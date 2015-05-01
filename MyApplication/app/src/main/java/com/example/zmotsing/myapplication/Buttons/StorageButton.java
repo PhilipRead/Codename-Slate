@@ -25,7 +25,7 @@ public class StorageButton extends Node {
 
     @Override
     public void action(MyGLSurfaceView SV) {
-        //MyGLRenderer.nodeTypeCreate = NodeType.STORAGE;
+        MyGLRenderer.nodeTypeCreate = NodeType.STORAGE;
     }
 
     @Override

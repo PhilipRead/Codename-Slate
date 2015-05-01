@@ -616,6 +616,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 case IF:
                     n = new IfNode(new Coord(x, y));
                     break;
+                case STORAGE:
+                    n = new StorageNode(new Coord(x, y));
+                    break;
             }
             nodeTypeCreate = null;
         }
