@@ -234,8 +234,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
             if(tempNode != null) {
                 Log.w("COORDS:---------  ", "(" + actionMovedCoordGL.X + ","+ actionMovedCoordGL.Y + ")");
-
+                int tempint = NodeList.indexOf(tempNode);
                 tempNode.setCoord(actionMovedCoordGL);
+                Coord tempc = controlPoints.get(tempint);
+                tempc.X =actionMovedCoordGL.X;
+                tempc.Y =actionMovedCoordGL.Y;
                 RedrawLine = true;
             }
 
