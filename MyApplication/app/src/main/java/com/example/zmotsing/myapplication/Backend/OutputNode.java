@@ -5,21 +5,23 @@ package com.example.zmotsing.myapplication.Backend;
  */
 public class OutputNode extends BackendNode
 {
-    String text;
-    VariableNode boundNode;
+    BackendNode boundNode;
 
-    OutputNode(int id)
+    OutputNode(int id, String newValue)
+    {
+        super(id, newValue);
+        boundNode = null;
+        setBindable(false);
+    }
+
+    OutputNode(int id, BackendNode newBoundNode)
     {
         super(id);
-        boundNode = null;
+        boundNode = newBoundNode;
+        setBindable(false);
     }
 
-    public void setValue(String t)
-    {
-        text = t;
-    }
-
-    public void bind(VariableNode node)
+    public void bind(BackendNode node)
     {
         boundNode = node;
     }
@@ -28,9 +30,9 @@ public class OutputNode extends BackendNode
     {
         if(boundNode != null)
         {
-            return boundNode.getStringValue();
+            return boundNode.getValue();
         }
 
-        return text;
+        return super.getValue();
     }
 }

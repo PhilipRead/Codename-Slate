@@ -63,7 +63,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         mycontext = context;
         // Render the view only when there is a change in the drawing data
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        BackendLogic.backendInitialize();
+        //BackendLogic.backendInitialize();
 
         builder = new AlertDialog.Builder(mycontext);
         int sHeight = mycontext.getResources().getDisplayMetrics().heightPixels - 60;
@@ -104,7 +104,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                             {
                                 textView.append("\n");
                                 ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                                BackendLogic.updateRegister(inputBuffer);
+                                BackendLogic.updateBackendNode(Tn.curNode.getID(), inputBuffer);
 
                                 Tn.start();
                                 return true;

@@ -33,7 +33,7 @@ public class VariableNode extends BackendNode
         return name;
     }
 
-    public boolean setValue(String v)
+   /* public boolean setValue(String v)
     {
         if(hasNumericValue)
         {
@@ -42,7 +42,7 @@ public class VariableNode extends BackendNode
 
         value = v;
         return true;
-    }
+    }*/
 
     public boolean setValue(double v)
     {

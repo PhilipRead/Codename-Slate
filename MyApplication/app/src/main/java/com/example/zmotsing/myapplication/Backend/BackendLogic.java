@@ -26,7 +26,7 @@ public class BackendLogic
     }
 
 // Register Methods
-    public static void backendInitialize()
+   /* public static void backendInitialize()
     {
         initializeVariableNode(0, "REG_VAL", "");
         initializeOutputNode(1, "");
@@ -41,10 +41,10 @@ public class BackendLogic
     public static String printRegister()
     {
         return printOutputNode(1);
-    }
+    }*/
 
 // Input Nodes
-    public static void initializeVariableNode(int id, String name, String value)
+  /*  public static void initializeVariableNode(int id, String name, String value)
     {
         VariableNode node = new VariableNode(id);
         node.Initialize(name, value);
@@ -82,13 +82,30 @@ public class BackendLogic
 
         VariableNode varNode = (VariableNode)backNode;
         return varNode.setValue(value);
+    }*/
+    public static void initializeInputNode(int id)
+    {
+        InputNode node = new InputNode(id);
+        logicNodes.add(node);
+    }
+
+    public static void updateBackendNode(int id, String text)
+    {
+        BackendNode node = findNode(id);
+
+        node.setValue(text);
     }
 
 // Output Nodes
+    public static void initializeOutputNode(int id, int bindNodeID)
+    {
+        BackendNode tempBind = findNode(bindNodeID);
+        OutputNode node = new OutputNode(id, tempBind);
+        logicNodes.add(node);
+    }
     public static void initializeOutputNode(int id, String text)
     {
-        OutputNode node = new OutputNode(id);
-        node.setValue(text);
+        OutputNode node = new OutputNode(id, text);
         logicNodes.add(node);
     }
 
@@ -97,13 +114,13 @@ public class BackendLogic
         BackendNode outBackNode = findNode(outId);
         BackendNode varBackNode = findNode(varId);
 
-        if(!(outBackNode instanceof OutputNode) || !(varBackNode instanceof VariableNode))
+        if(!(outBackNode instanceof OutputNode) || !(varBackNode instanceof InputNode))
         {
             return false;
         }
 
         OutputNode outNode = (OutputNode)outBackNode;
-        VariableNode varNode = (VariableNode)varBackNode;
+        InputNode varNode = (InputNode)varBackNode;
 
         outNode.bind(varNode);
 

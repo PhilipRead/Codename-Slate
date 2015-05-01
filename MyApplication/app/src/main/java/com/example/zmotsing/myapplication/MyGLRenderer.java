@@ -243,7 +243,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Node tempNode = getNodeTouched(actionMovedCoordGL, NodeList, false);
 
             if(tempNode != null) {
-                Log.w("COORDS:---------  ", "(" + actionMovedCoordGL.X + ","+ actionMovedCoordGL.Y + ")");
                 int tempint = NodeList.indexOf(tempNode);
                 tempNode.setCoord(actionMovedCoordGL);
                 Coord tempc = controlPoints.get(tempint);
@@ -361,6 +360,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 if(bindNode != null)
                 {
                     bindMode = false;
+                    BackendLogic.initializeOutputNode(nodeWaitingBind.getID(), bindNode.getID());
                 }
 
             }
@@ -516,6 +516,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 case INPUT:
 
                     n = new InputNode(new Coord(x, y));
+
+                    BackendLogic.initializeInputNode(n.getID());
 
                     bindableNodes.add(n);
                     break;

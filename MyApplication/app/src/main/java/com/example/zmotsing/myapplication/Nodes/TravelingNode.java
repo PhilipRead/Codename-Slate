@@ -19,6 +19,7 @@ import java.util.TimerTask;
  * Created by acowdrey on 12/10/14.
  */
 public class TravelingNode extends Node {
+    public Node curNode;
     Handler myHandler;// = new Handler();
     Runnable myRunnable;
     public int ArrayIndex;
@@ -39,7 +40,8 @@ public class TravelingNode extends Node {
             //Log.w("ArrayIndex", "" + ArrayIndex);
             if((ArrayIndex%177)-3== 0)
             {
-                MyGLRenderer.NodeList.get(ArrayIndex/177).action(SV);
+                curNode = MyGLRenderer.NodeList.get(ArrayIndex/177);
+                curNode.action(SV);
             }
             float x = MyGLRenderer.startLineStrip.vertices[ArrayIndex];
             float y = MyGLRenderer.startLineStrip.vertices[ArrayIndex + 1];
