@@ -455,14 +455,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float button_x = -0.78f;
         float button_y = 0.9f;
         float button_dx = .427f;
-        float button_dy = 0f;
+        float button_dy = -0.185f;
 
         ButtonsToLoad.add(new OutputButton(new Coord(button_x, button_y)));
-        button_x += button_dx;button_y += button_dy;
+        button_x += button_dx;
         ButtonsToLoad.add(new InputButton(new Coord(button_x, button_y)));
-        button_x += button_dx;button_y += button_dy;
+        button_x += button_dx;
         ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
-        button_x += button_dx;button_y += button_dy;
+        button_x = -0.78f; button_y += button_dy;
+        ButtonsToLoad.add(new StorageButton (new Coord(button_x, button_y)));
+
         ButtonsToLoad.add(new PlayButton(new Coord(0.88f, 0.81f)));
 
         //nody = new NodeSprite();
