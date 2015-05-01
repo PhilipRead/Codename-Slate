@@ -3,6 +3,7 @@ package com.example.zmotsing.myapplication.Buttons;
 import com.example.zmotsing.myapplication.Coord;
 import com.example.zmotsing.myapplication.MyGLSurfaceView;
 import com.example.zmotsing.myapplication.Node;
+import com.example.zmotsing.myapplication.NodeType;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
 
@@ -23,6 +24,7 @@ public class IfButton extends Node {
 
     @Override
     public void action(MyGLSurfaceView SV) {
+        com.example.zmotsing.myapplication.MyGLRenderer.nodeTypeCreate= NodeType.IF;
 
     }
 
