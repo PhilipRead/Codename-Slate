@@ -87,13 +87,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static Node nodeWaitingBind;
     float viewwidth;
     float viewheight;
-    public static CopyOnWriteArrayList<Node> NodeList = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> MasterNodeList = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> StartNodeList = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> CurrNodeList = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> ifTempList = null;
     static CopyOnWriteArrayList<Node> ButtonList = new CopyOnWriteArrayList<>();
     public static TextManager inputTxt = new TextManager(1.0f, 0.0f, 0.5f, 0.0f);
     public static TextManager outputTxt = new TextManager(1.0f, 0.0f, 0.0f, 0.0f);
 
 
-    static CopyOnWriteArrayList<Coord> controlPoints = new CopyOnWriteArrayList<Coord>();
+    static CopyOnWriteArrayList<Coord> startControlPoints = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Coord> MasterControlPoints = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Coord> currControlPoints = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Coord> ifTempPoints = null;
     public static CopyOnWriteArrayList<Node> ButtonsToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> NodesToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<String> inputTxtToLoad = new CopyOnWriteArrayList<>();
@@ -147,22 +153,50 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         //region Load in all graphics for new nodes
         for (Node element : NodesToLoad) {
-            boolean currhasEndNode = (NodeList.size() > 1);
-
             setupGraphic(gl,element,false);
-            if (currhasEndNode)
+            if(ifTempList != null  && element instanceof IfNode)
             {
-                NodeList.add(NodeList.size()-1,element);
-                controlPoints.add(controlPoints.size()-1,element.getCoord());
+                boolean ifHasEndNode = (ifTempList.size() > 1);
+
+                if (true)
+                {
+
+                    ifTempList.add(ifTempList.size()-1,element);
+                    ifTempPoints.add(ifTempPoints.size()-1,element.getCoord());
+                    CurrNodeList.add(CurrNodeList.size() - 1, element);
+                    currControlPoints.add(currControlPoints.size() - 1, element.getCoord());
+                }
+                else
+                {
+
+                    ifTempList.add(element);
+                    ifTempPoints.add(element.getCoord());
+                    CurrNodeList.add(element);
+                    currControlPoints.add(element.getCoord());
+                }
+                ifTempList = null;
             }
             else
             {
-                NodeList.add(element);
-                controlPoints.add(element.getCoord());
+                boolean currhasEndNode = (CurrNodeList.size() > 1);
+
+                if (currhasEndNode)
+                {
+                    CurrNodeList.add(CurrNodeList.size() - 1, element);
+                    currControlPoints.add(currControlPoints.size() - 1, element.getCoord());
+                }
+                else
+                {
+                    CurrNodeList.add(element);
+                    currControlPoints.add(element.getCoord());
+                }
             }
+            MasterNodeList.add(element);
+            MasterControlPoints.add(element.getCoord());
             RedrawLine = true;
 
         }
+
         NodesToLoad.clear();
 
         for (Node element : ButtonsToLoad) {
@@ -198,8 +232,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         //endregion
 
         //region Redraw linestrip
-        if (RedrawLine && controlPoints.size() > 2) {
-            startLineStrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
+        boolean redrawAllLines = false;
+        if (RedrawLine)
+        {
+            redrawAllLines = true;
+            if(startControlPoints.size() > 2)
+            {
+                startLineStrip = new LineStrip(Spline.interpolate(startControlPoints, 60, CatmullRomType.Chordal));
+
+            }
+            else if(startControlPoints.size() == 2)
+            {
+                startLineStrip = new LineStrip(startControlPoints);
+            }
             RedrawLine = false;
         }
         //endregion
@@ -209,7 +254,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             actionDown = false;
             actionDownCoordGL = GetWorldCoords(gl, actionDownCoord);
 
-            if(getNodeTouched(actionDownCoordGL, NodeList, false) != null) {
+            if(getNodeTouched(actionDownCoordGL,MasterNodeList, false) != null) {
                 MyGLSurfaceView.moveNodeTimer = new Timer();
                 MyGLSurfaceView.moveNodeTimer.schedule(new TimerTask() {
                     @Override
@@ -240,14 +285,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }else if(nodeMoved){
             nodeMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
-            Node tempNode = getNodeTouched(actionMovedCoordGL, NodeList, false);
+            Node tempNode = getNodeTouched(actionMovedCoordGL, MasterNodeList, false);
 
             if(tempNode != null) {
-                int tempint = NodeList.indexOf(tempNode);
-                tempNode.setCoord(actionMovedCoordGL);
-                Coord tempc = controlPoints.get(tempint);
+                int tempint = MasterNodeList.indexOf(tempNode);
+                Coord tempc = MasterControlPoints.get(tempint);
                 tempc.X =actionMovedCoordGL.X;
                 tempc.Y =actionMovedCoordGL.Y;
+                tempNode.setCoord(tempc);
                 RedrawLine = true;
             }
 
@@ -282,11 +327,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             float tempY = transY;
             transX = transY = 0;
             int i = 0;
-            for (Node element : NodeList) {
+            for (Node element : StartNodeList) {
+
                 Coord co = element.getCoord();
                 co.X += tempX;
                 co.Y += tempY;
-                controlPoints.set(i,co);
+
+                if(element instanceof IfNode)
+                {
+                    ((IfNode)element).translateNodes(tempX,tempY);
+                    ((IfNode)element).ifControlPoints.set(0,co);
+                }
+
+                startControlPoints.set(i, co);
                 element.setCoord(co);
                 i++;
             }
@@ -309,19 +362,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             element.spr.draw(gl);
         }
 
-        for (Node element : NodeList) {
-            if(element instanceof IfNode)
-            {
-
-            }
-            element.spr.draw(gl);
-        }
-
-        //NodeList.get(0).spr.draw(gl);
         if (startLineStrip != null) {
             startLineStrip.draw(gl); // ( NEW )
 
         }
+        for (Node element : StartNodeList) {
+            if(element instanceof IfNode)
+            {
+                ((IfNode)element).drawTruePath(gl, redrawAllLines);
+            }
+            element.spr.draw(gl);
+        }
+        redrawAllLines = false;
         Tn.spr.draw(gl);
 
         switchToOrtho(gl);
@@ -379,6 +431,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Replace the current matrix with the identity matrix
         gl.glLoadIdentity();
     }
+
     public void switchBackToFrustum(GL10 gl)
     {
         gl.glEnable(gl.GL_DEPTH_TEST);
@@ -425,7 +478,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
         RedrawLine = false;
-
+        currControlPoints = startControlPoints;
+        CurrNodeList = StartNodeList;
         nodeTypeCreate = NodeType.START;
         addControlPoints(200f, 200f);
         nodeTypeCreate = NodeType.END;
@@ -495,11 +549,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 
 
-        for (Node c : NodeList) {
-            controlPoints.add(c.getCoord());
+        for (Node c : StartNodeList) {
+            startControlPoints.add(c.getCoord());
         }
 
-        startLineStrip = new LineStrip(Spline.interpolate(controlPoints, 60, CatmullRomType.Chordal));
+        startLineStrip = new LineStrip(Spline.interpolate(startControlPoints, 60, CatmullRomType.Chordal));
     }
 
 
@@ -612,6 +666,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     n = new EndNode(new Coord(x, y));
                     break;
                 case IF:
+                    ifTempList = CurrNodeList;
+                    ifTempPoints = currControlPoints;
                     n = new IfNode(new Coord(x, y));
                     break;
             }
