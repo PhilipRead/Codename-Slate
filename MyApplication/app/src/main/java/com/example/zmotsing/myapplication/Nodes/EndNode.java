@@ -1,10 +1,13 @@
 package com.example.zmotsing.myapplication.Nodes;
 
 import com.example.zmotsing.myapplication.Coord;
+import com.example.zmotsing.myapplication.LineStrip;
 import com.example.zmotsing.myapplication.MyGLSurfaceView;
 import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by acowdrey on 4/27/15.
@@ -13,8 +16,8 @@ public class EndNode extends Node {
 
     int currentNodeIndex;
 
-    public EndNode(Coord c) {
-        super(c);
+    public EndNode(Coord c, CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
+        super(c,nlist,points);
         drawableInt = R.drawable.endnode;
         currentNodeIndex = 0;
         scalingFactor = .2f;

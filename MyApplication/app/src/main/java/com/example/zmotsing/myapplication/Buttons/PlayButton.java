@@ -17,7 +17,7 @@ public class PlayButton extends Node {
     public static boolean paused = true;
 
     public PlayButton(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.playbutton;
         //drawableIntOptional = R.drawable.playButton_pressed;
         scalingFactor = .2f;

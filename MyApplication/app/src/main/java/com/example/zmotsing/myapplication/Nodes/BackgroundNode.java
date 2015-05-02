@@ -1,11 +1,14 @@
 package com.example.zmotsing.myapplication.Nodes;
 
 import com.example.zmotsing.myapplication.Coord;
+import com.example.zmotsing.myapplication.LineStrip;
 import com.example.zmotsing.myapplication.MyGLRenderer;
 import com.example.zmotsing.myapplication.MyGLSurfaceView;
 import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by acowdrey on 3/30/15.
@@ -15,7 +18,7 @@ public class BackgroundNode extends Node {
     public int ArrayIndex;
 
     public BackgroundNode(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.outputnode;
         ArrayIndex = 0;
     }

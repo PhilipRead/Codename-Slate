@@ -4,13 +4,15 @@ import android.util.Log;
 
 import com.example.zmotsing.myapplication.*;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Created by DreyCow on 11/25/2014.
  */
 public class InputNode extends Node {
 
-    public InputNode(Coord c) {
-        super(c);
+    public InputNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points){
+        super(c,nlist,points);
         drawableInt = R.drawable.inputnode;
         scalingFactor = .2f;
         AddToLine = 1;

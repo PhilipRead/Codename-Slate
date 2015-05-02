@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class OutputButton extends Node {
 
     public OutputButton(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.outputbutton;
         drawableIntOptional = R.drawable.outputbutton_pressed;
         scalingFactor = .2f;

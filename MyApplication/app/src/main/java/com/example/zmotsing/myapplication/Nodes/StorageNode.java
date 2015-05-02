@@ -9,14 +9,16 @@ import com.example.zmotsing.myapplication.Node;
 import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Sprite;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Created by wbs on 5/1/15.
  */
 public class StorageNode extends Node {
     int currentNodeIndex;
 
-    public StorageNode(Coord c) {
-        super(c);
+    public StorageNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
+        super(c,nlist,points);
         drawableInt = R.drawable.storagenode;
         currentNodeIndex = 0;
         scalingFactor = .2f;

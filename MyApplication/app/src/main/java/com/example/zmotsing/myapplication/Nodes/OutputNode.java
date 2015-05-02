@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.zmotsing.myapplication.*;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Created by DreyCow on 11/25/2014.
  */
@@ -11,8 +13,8 @@ public class OutputNode extends Node {
 
     int currentNodeIndex;
 
-    public OutputNode(Coord c) {
-        super(c);
+    public OutputNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
+        super(c,nlist,points);
         drawableInt = R.drawable.outputnode;
         currentNodeIndex = 0;
         scalingFactor = .2f;

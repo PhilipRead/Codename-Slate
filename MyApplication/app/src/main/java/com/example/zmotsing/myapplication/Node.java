@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -17,11 +19,15 @@ public abstract class Node {
     protected float scalingFactor;
     protected int AddToLine;
     protected float LBound, RBound, UBound, DBound;
+    public CopyOnWriteArrayList<Coord> controlPoints;
+    public CopyOnWriteArrayList<Node> nodeList;
 
     protected static int nextID = 0;
     private int id;
 
-    public Node(Coord c) {
+    public Node(Coord c, CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
+        controlPoints = points;
+        nodeList = nlist;
         co = c;
         Z = 0f;
         id = nextID;

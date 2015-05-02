@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class IfButton extends Node {
 
     public IfButton(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.ifbutton;
         drawableIntOptional = R.drawable.ifbutton_pressed;
         scalingFactor = .2f;

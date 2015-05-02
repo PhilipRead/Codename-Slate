@@ -223,6 +223,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 if(moveNodeTimer != null) {
                     moveNodeTimer.cancel();
                     moveNodeTimer.purge();
+                    nodeIsTapped = true;
                 }
                 nodeMoveMode = false;
                 swipeMode = true;

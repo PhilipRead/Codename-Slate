@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.zmotsing.myapplication.Coord;
+import com.example.zmotsing.myapplication.LineStrip;
 import com.example.zmotsing.myapplication.MyGLRenderer;
 import com.example.zmotsing.myapplication.MyGLSurfaceView;
 import com.example.zmotsing.myapplication.Node;
@@ -14,18 +15,23 @@ import org.w3c.dom.NodeList;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by acowdrey on 12/10/14.
  */
 public class TravelingNode extends Node {
     public Node curNode;
+    public LineStrip tLineStrip = null;
+    public CopyOnWriteArrayList<Node> tNodeList;
     Handler myHandler;// = new Handler();
     Runnable myRunnable;
     public int ArrayIndex;
     Timer nodeTimer;
-    public TravelingNode(Coord c) {
-        super(c);
+    public TravelingNode(Coord c, CopyOnWriteArrayList<Node> list, LineStrip strip ) {
+        super(c,null,null);
+        tLineStrip = strip;
+        tNodeList = list;
         drawableInt = R.drawable.outputnode;
         ArrayIndex = 0;
     }
@@ -33,18 +39,17 @@ public class TravelingNode extends Node {
     @Override
     public void action(MyGLSurfaceView SV)
     {
-        if((MyGLRenderer.startLineStrip!= null) && MyGLRenderer.startLineStrip.vertices.length > ArrayIndex)
+        if((tLineStrip!= null) && tLineStrip.vertices.length > ArrayIndex)
         {
-
 
             //Log.w("ArrayIndex", "" + ArrayIndex);
             if((ArrayIndex%177)-3== 0)
             {
-                curNode = MyGLRenderer.StartNodeList.get(ArrayIndex/177);
+                curNode =tNodeList.get(ArrayIndex/177);
                 curNode.action(SV);
             }
-            float x = MyGLRenderer.startLineStrip.vertices[ArrayIndex];
-            float y = MyGLRenderer.startLineStrip.vertices[ArrayIndex + 1];
+            float x = tLineStrip.vertices[ArrayIndex];
+            float y = tLineStrip.vertices[ArrayIndex + 1];
             Coord c = new Coord(x, y);
             this.setCoord(c);
             spr.SetupSprite(R.drawable.travellingnode, x, y);
@@ -52,6 +57,7 @@ public class TravelingNode extends Node {
 
         }
     }
+
 
     public void stop()
     {

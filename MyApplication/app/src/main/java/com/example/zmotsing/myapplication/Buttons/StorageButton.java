@@ -16,7 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class StorageButton extends Node {
 
     public StorageButton(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.storagebutton;
         drawableIntOptional = R.drawable.storagebutton_pressed;
         scalingFactor = .2f;

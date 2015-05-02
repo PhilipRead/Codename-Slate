@@ -10,13 +10,13 @@ import com.example.zmotsing.myapplication.R;
 import com.example.zmotsing.myapplication.Spline;
 import com.example.zmotsing.myapplication.Sprite;
 import com.example.zmotsing.myapplication.MyGLRenderer;
-import com.example.zmotsing.myapplication.NodeType;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import static com.example.zmotsing.myapplication.MyGLRenderer.Tn;
 import static com.example.zmotsing.myapplication.MyGLRenderer.addControlPoints;
 
 /**
@@ -27,14 +27,14 @@ public class IfNode extends Node {
     public CopyOnWriteArrayList<Coord> ifControlPoints = new CopyOnWriteArrayList<>();
     CopyOnWriteArrayList<Node> ifNodes = new CopyOnWriteArrayList<>();
     LineStrip truepath;
-    public IfNode(Coord c) {
-        super(c);
+    public IfNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
+        super(c,nlist,points);
         drawableInt = R.drawable.ifnode;
         scalingFactor = .2f;
         AddToLine = 1;
         //ifNodes.add(this);
         MyGLRenderer.CurrNodeList = ifNodes;
-        MyGLRenderer.currControlPoints = ifControlPoints;
+        MyGLRenderer.CurrControlPoints = ifControlPoints;
         MyGLRenderer.nodeTypeCreate = NodeType.END;
         addControlPoints(c.X-50f, c.Y -50f);
         //ifControlPoints.add(c);
@@ -44,7 +44,14 @@ public class IfNode extends Node {
 
     @Override
     public void action(MyGLSurfaceView SV) {
-
+        if(Tn.ArrayIndex >50) {
+            boolean ifResult = true;
+            if (ifResult) {
+                Tn.tLineStrip = truepath;
+                Tn.tNodeList = ifNodes;
+                Tn.ArrayIndex = 0;
+            }
+        }
        //MyGLRenderer.Tn.stop();
        //SV.getInput();
         //surfaceview

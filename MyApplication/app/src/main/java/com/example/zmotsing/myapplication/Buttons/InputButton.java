@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class InputButton extends Node {
 
     public InputButton(Coord c) {
-        super(c);
+        super(c,null,null);
         drawableInt = R.drawable.inputbutton;
         drawableIntOptional = R.drawable.inputbutton_pressed;
         scalingFactor = .2f;
