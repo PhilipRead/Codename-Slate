@@ -624,7 +624,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     AlertDialog.Builder builderStr = new AlertDialog.Builder(myContext);
                     builderStr.setPositiveButton("Set Empty", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //Create new node in backend with a null value
+                            BackendLogic.initializeStorageNode(curNodeStr.getID());
+                            bindableNodes.add(curNodeStr);
                             dialog.cancel();
                         }
                     });
@@ -646,8 +647,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                                             if (event.getAction() == KeyEvent.ACTION_UP) {
                                                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                                                    //BackendLogic.initializeOutputNode(nID, tempBuffer);
-                                                    //initialize storage node with initial value on backend.
+                                                    if(tempBuffer.matches("-?\\d+(\\.\\d+)?"))
+                                                    {
+                                                        BackendLogic.initializeStorageNode(nID, tempBuffer, true);
+                                                    }
+                                                    else
+                                                    {
+                                                        BackendLogic.initializeStorageNode(nID, tempBuffer, false);
+                                                    }
+
+                                                    bindableNodes.add(curNodeStr);
                                                     ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
                                                     dialog.dismiss();

@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication.Backend;
 
+import com.example.zmotsing.myapplication.Nodes.*;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -25,70 +27,6 @@ public class BackendLogic
         return node;
     }
 
-// Register Methods
-   /* public static void backendInitialize()
-    {
-        initializeVariableNode(0, "REG_VAL", "");
-        initializeOutputNode(1, "");
-        bindOutputNode(1, 0);
-    }
-
-    public static boolean updateRegister(String value)
-    {
-        return updateVariableNode(0, value);
-    }
-
-    public static String printRegister()
-    {
-        return printOutputNode(1);
-    }*/
-
-// Input Nodes
-  /*  public static void initializeVariableNode(int id, String name, String value)
-    {
-        VariableNode node = new VariableNode(id);
-        node.Initialize(name, value);
-        logicNodes.add(node);
-    }
-
-    public static void initializeVariableNode(int id, String name, double value)
-    {
-        VariableNode node = new VariableNode(id);
-        node.Initialize(name, value);
-        logicNodes.add(node);
-    }
-
-    public static boolean updateVariableNode(int id, String value)
-    {
-        BackendNode backNode = findNode(id);
-
-        if(!(backNode instanceof VariableNode))
-        {
-            return false;
-        }
-
-        VariableNode varNode = (VariableNode)backNode;
-        return varNode.setValue(value);
-    }
-
-    public static boolean updateVariableNode(int id, double value)
-    {
-        BackendNode backNode = findNode(id);
-
-        if(!(backNode instanceof VariableNode))
-        {
-            return false;
-        }
-
-        VariableNode varNode = (VariableNode)backNode;
-        return varNode.setValue(value);
-    }*/
-    public static void initializeInputNode(int id)
-    {
-        InputNode node = new InputNode(id);
-        logicNodes.add(node);
-    }
-
     public static void updateBackendNode(int id, String text)
     {
         BackendNode node = findNode(id);
@@ -96,7 +34,14 @@ public class BackendLogic
         node.setValue(text);
     }
 
-// Output Nodes
+//Input Methods
+    public static void initializeInputNode(int id)
+    {
+        InputNode node = new InputNode(id);
+        logicNodes.add(node);
+    }
+
+//Output Methods
     public static void initializeOutputNode(int id, int bindNodeID)
     {
         BackendNode tempBind = findNode(bindNodeID);
@@ -109,22 +54,12 @@ public class BackendLogic
         logicNodes.add(node);
     }
 
-    public static boolean bindOutputNode(int outId, int varId)
+    public static void bindOutputNode(int outID, int bindID)
     {
-        BackendNode outBackNode = findNode(outId);
-        BackendNode varBackNode = findNode(varId);
+        OutputNode outNode = (OutputNode) findNode(outID);
+        BackendNode childNode = findNode(bindID);
 
-        if(!(outBackNode instanceof OutputNode) || !(varBackNode instanceof InputNode))
-        {
-            return false;
-        }
-
-        OutputNode outNode = (OutputNode)outBackNode;
-        InputNode varNode = (InputNode)varBackNode;
-
-        outNode.bind(varNode);
-
-        return true;
+        outNode.bind(childNode);
     }
 
     public static String printOutputNode(int id)
@@ -133,5 +68,16 @@ public class BackendLogic
         return node.getValue();
     }
 
-// If-Else Nodes
+//Storage Methods
+    public static void initializeStorageNode(int id)
+    {
+        StorageNode node = new StorageNode(id);
+        logicNodes.add(node);
+    }
+
+    public static void initializeStorageNode(int id, String value, boolean isNumber)
+    {
+        StorageNode node = new StorageNode(id, value, isNumber);
+        logicNodes.add(node);
+    }
 }
