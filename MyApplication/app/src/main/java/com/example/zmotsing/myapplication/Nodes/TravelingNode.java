@@ -40,7 +40,7 @@ public class TravelingNode extends Node {
             //Log.w("ArrayIndex", "" + ArrayIndex);
             if((ArrayIndex%177)-3== 0)
             {
-                curNode = MyGLRenderer.NodeList.get(ArrayIndex/177);
+                curNode = MyGLRenderer.StartNodeList.get(ArrayIndex/177);
                 curNode.action(SV);
             }
             float x = MyGLRenderer.startLineStrip.vertices[ArrayIndex];
