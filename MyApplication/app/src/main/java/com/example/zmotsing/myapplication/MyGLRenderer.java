@@ -578,6 +578,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         ButtonsToLoad.add(new IfButton(new Coord(button_x, button_y)));
         button_x = -0.78f; button_y += button_dy;
         ButtonsToLoad.add(new StorageButton (new Coord(button_x, button_y)));
+        button_x += button_dx;
+        ButtonsToLoad.add(new SetButton(new Coord(button_x, button_y)));
+        button_x += button_dx;
+        ButtonsToLoad.add(new MathButton(new Coord(button_x, button_y)));
 
         ButtonsToLoad.add(new PlayButton(new Coord(0.88f, 0.81f)));
 
