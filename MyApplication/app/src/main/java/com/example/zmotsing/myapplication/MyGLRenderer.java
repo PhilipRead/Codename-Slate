@@ -861,6 +861,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     leftNode = null;
                     rightNode = null;
                     n = new MathNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
+                   // BackendLogic.initializeMathNode(n.getID());
                     nodeWaitingBind = n;
                     curSpinIndex = 0;
 
@@ -1025,7 +1026,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Spinner mathSpinner = new Spinner(myContext);
 
         String[] arraySpinnerMath = new String[] {
-                "+", "-", "*", "/", "^", "mod"
+                "+", "-", "*", "/", "^", "%"
         };
         ArrayAdapter<String> adapterMath = new ArrayAdapter<String>(myContext,
                 android.R.layout.simple_spinner_item, arraySpinnerMath);
