@@ -37,8 +37,6 @@ public class IfNode extends Node {
         //ifNodes.add(this);
         MyGLRenderer.CurrNodeList = ifNodes;
         MyGLRenderer.CurrControlPoints = ifControlPoints;
-        MyGLRenderer.nodeTypeCreate = NodeType.END;
-        addControlPoints(c.X-50f, c.Y -50f);
         //ifControlPoints.add(c);
 //        MyGLRenderer.MasterNodeList.add(c);
 //        MyGLRenderer.MasterControlPoints.add(c);
@@ -66,12 +64,10 @@ public class IfNode extends Node {
             if(element instanceof IfNode)
             {
                 ((IfNode)element).translateNodes(x,y);
-                ((IfNode)element).ifControlPoints.set(0,co);
             }
             Coord co = element.getCoord();
             co.X += x;
             co.Y += y;
-            ifControlPoints.set(i, co);
             element.setCoord(co);
             i++;
         }

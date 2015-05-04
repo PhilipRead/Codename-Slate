@@ -171,8 +171,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                     ifTempList.add(ifTempList.size()-1,element);
                     ifTempPoints.add(ifTempPoints.size()-1,element.getCoord());
-                    CurrNodeList.add(CurrNodeList.size() - 1, element);
-                    CurrControlPoints.add(CurrControlPoints.size() - 1, element.getCoord());
+                    CurrNodeList.add(element);
+                    CurrControlPoints.add(element.getCoord());
                 }
                 else
                 {
@@ -356,6 +356,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 {
                     ((IfNode)element).translateNodes(tempX,tempY);
                     ((IfNode)element).ifControlPoints.set(0,co);
+                }
+                if(element instanceof EndNode)
+                {
+                    Log.w("Printed", "Translated END NODE" + element.hashCode());
                 }
 
                 StartControlPoints.set(i, co);
@@ -544,10 +548,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, javax.microedition.khronos.egl.EGLConfig eglConfig) {
 
         RedrawLine = false;
+        Coord Start = new Coord(200f, 200f);
         CurrControlPoints = StartControlPoints;
         CurrNodeList = StartNodeList;
         nodeTypeCreate = NodeType.START;
-        addControlPoints(200f, 200f);
+        addControlPoints(Start.X, Start.Y);
         nodeTypeCreate = NodeType.END;
         addControlPoints(400f, 200f);
 //        nodeTypeCreate = NodeType.OUTPUT;
@@ -557,7 +562,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 //        nodeTypeCreate = NodeType.OUTPUT;
 //        addControlPoints(400f, 26f);
 
-        Tn = new TravelingNode(new Coord(-0.6f, -0.6f),StartNodeList,startLineStrip);
+        Tn = new TravelingNode(Start,StartNodeList,startLineStrip);
         Bn = new BackgroundNode(new Coord(0f, 0f));
 
         final Runnable myRunnable = new Runnable() {
@@ -752,6 +757,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     rightNode = null;
                     n = new IfNode(new Coord(x, y),CurrNodeList,CurrControlPoints);
                     NodesToLoad.add(n);
+                    MyGLRenderer.nodeTypeCreate = NodeType.END;
+                    addControlPoints(x-50f, y -50f);
                     BackendLogic.initializeIfNode(n.getID());
                     nodeWaitingBind = n;
                     curSpinIndex = 0;

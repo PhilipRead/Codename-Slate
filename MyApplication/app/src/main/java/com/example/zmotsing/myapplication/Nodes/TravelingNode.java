@@ -3,6 +3,7 @@ package com.example.zmotsing.myapplication.Nodes;
 import android.os.Handler;
 import android.util.Log;
 
+import com.example.zmotsing.myapplication.Buttons.PlayButton;
 import com.example.zmotsing.myapplication.Coord;
 import com.example.zmotsing.myapplication.LineStrip;
 import com.example.zmotsing.myapplication.MyGLRenderer;
@@ -30,6 +31,8 @@ public class TravelingNode extends Node {
     Timer nodeTimer;
     public TravelingNode(Coord c, CopyOnWriteArrayList<Node> list, LineStrip strip ) {
         super(c,null,null);
+
+        this.setCoord(c);
         tLineStrip = strip;
         tNodeList = list;
         drawableInt = R.drawable.outputnode;
@@ -55,6 +58,18 @@ public class TravelingNode extends Node {
             spr.SetupSprite(R.drawable.travellingnode, x, y);
             ArrayIndex += 3;
 
+        }
+        else
+        {
+            tLineStrip = MyGLRenderer.startLineStrip;
+            tNodeList = MyGLRenderer.StartNodeList;
+            ArrayIndex = 0;
+            float x = tLineStrip.vertices[ArrayIndex];
+            float y = tLineStrip.vertices[ArrayIndex + 1];
+            Coord c = new Coord(x, y);
+            this.setCoord(c);
+            PlayButton.paused = true;
+            this.stop();
         }
     }
 
