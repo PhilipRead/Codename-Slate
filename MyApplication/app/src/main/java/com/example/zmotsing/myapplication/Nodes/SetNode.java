@@ -20,7 +20,7 @@ public class SetNode extends Node {
 
     public SetNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
         super(c,nlist,points);
-        drawableInt = R.drawable.outputnode;
+        drawableInt = R.drawable.setnode;
         currentNodeIndex = 0;
         scalingFactor = .2f;
         AddToLine = 1;

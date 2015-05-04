@@ -843,6 +843,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     alertStr.show();
                     break;
                 //endregion
+                case SET:
+                    //region SetNode Fold
+                    n = new SetNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
+                    break;
+                    //endregion
+                case MATH:
+                    //region MathNode Fold
+                    n = new MathNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
+                    break;
+                    //endregion
             }
             nodeTypeCreate = null;
         }
