@@ -16,8 +16,8 @@ public class SetButton extends Node {
 
     public SetButton(Coord c) {
         super(c,null,null);
-        drawableInt = R.drawable.outputbutton;
-        drawableIntOptional = R.drawable.outputbutton_pressed;
+        drawableInt = R.drawable.setbutton;
+        drawableIntOptional = R.drawable.setbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
 

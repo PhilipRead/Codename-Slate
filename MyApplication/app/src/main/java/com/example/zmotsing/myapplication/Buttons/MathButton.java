@@ -16,8 +16,8 @@ public class MathButton extends Node {
 
     public MathButton(Coord c) {
         super(c,null,null);
-        drawableInt = R.drawable.outputbutton;
-        drawableIntOptional = R.drawable.outputbutton_pressed;
+        drawableInt = R.drawable.mathbutton;
+        drawableIntOptional = R.drawable.mathbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
 
