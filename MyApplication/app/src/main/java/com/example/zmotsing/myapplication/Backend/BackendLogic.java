@@ -144,4 +144,11 @@ public class BackendLogic
         else
             return false;
     }
+
+//Math Methods
+public static void initializeMathNode(int id)
+{
+    MathNode node = new MathNode(id);
+    logicNodes.add(node);
+}
 }
