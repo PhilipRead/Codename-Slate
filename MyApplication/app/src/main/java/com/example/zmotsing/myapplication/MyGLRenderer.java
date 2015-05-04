@@ -51,50 +51,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private static Context myContext;
     public static TravelingNode Tn;
     public static BackgroundNode Bn;
+    public static LineStrip startLineStrip;
 
-    public static boolean action_flag = false;
     public static NodeType nodeTypeCreate = null;
-    static float transX;
-    static float transY;
-    static float transZ = -4;
+    static float transX,transY,transZ = -4;
     public MyGLSurfaceView surfaceview;
     public MyGLRenderer() {}
-    public static LineStrip startLineStrip;
-    public static Coord TouchEventCoord;
-    public static Coord TouchDownCoord;
-    public static boolean TouchedDown;
-    public static boolean Touched;
-    public static boolean bindMode;
-    public static boolean lBindMode;
-    public static boolean rBindMode;
-    public static boolean leftSet;
-    public static boolean rightSet;
-    public static String rightBuffer;
-    public static String leftBuffer;
-    public static boolean RedrawLine;
-    public static Coord actionDownCoord;
-    public static Coord actionDownCoordGL;
-    public static Coord pointerDownCoord;
-    public static Coord pointerDownCoordGL;
-    public static Coord pointerMovedCoord;
-    public static Coord pointerMovedCoordGL;
-    public static Coord actionMovedCoord;
-    public static Coord actionMovedCoordGL;
+    public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped;
+    public static String rightBuffer,leftBuffer,curSpinVal;
+    public static Coord TouchEventCoord,TouchDownCoord,actionDownCoord,actionDownCoordGL, pointerDownCoord,pointerDownCoordGL,pointerMovedCoord,pointerMovedCoordGL,actionMovedCoord,actionMovedCoordGL;
     public static double spacing;
-    public static boolean actionDown;
-    public static boolean actionMoved;
-    public static boolean nodeMoved;
-    public static boolean pointerDown;
-    public static boolean pinchMoved;
-    public static Node curPressed;
-    public static Node nodeWaitingBind;
-    public static Node leftNode;
-    public static Node rightNode;
+    public static Node curPressed,nodeWaitingBind,leftNode,rightNode;
     public static int curSpinIndex;
-    public static String curSpinVal;
-    public static boolean nodeIsTapped = false;
-    float viewwidth;
-    float viewheight;
+    float viewwidth,viewheight;
     public static CopyOnWriteArrayList<Node> MasterNodeList = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> StartNodeList = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> CurrNodeList = new CopyOnWriteArrayList<>();
@@ -307,7 +276,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
 
 
-        }else if(pinchMoved){
+        }else if(false)
+                //(pinchMoved)
+        {
             pinchMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
             pointerMovedCoordGL = GetWorldCoords(gl, pointerMovedCoord);
@@ -366,6 +337,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 element.setCoord(co);
                 i++;
             }
+            Coord co = Tn.getCoord();
+            co.X += tempX;
+            co.Y += tempY;
+            Tn.setCoord(co);
+
             RedrawLine = true;
         }
         //endregion
