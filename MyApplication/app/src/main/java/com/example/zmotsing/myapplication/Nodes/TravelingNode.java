@@ -59,6 +59,24 @@ public class TravelingNode extends Node {
             ArrayIndex += 3;
 
         }
+        else if (!(tNodeList.get(tNodeList.size()-1) instanceof EndNode))
+        {
+            Node temp = tNodeList.get(tNodeList.size()-1);
+            int index = temp.nodeList.indexOf(temp);
+            Node index0 = temp.nodeList.get(0);
+            if(index0 instanceof StartNode)
+            {
+                tLineStrip = MyGLRenderer.startLineStrip;
+                tNodeList = MyGLRenderer.StartNodeList;
+            }
+            else
+            {
+                tLineStrip = ((IfNode)index0).truepath;
+                tNodeList = temp.nodeList;
+            }
+            ArrayIndex = 177*index;
+
+        }
         else
         {
             tLineStrip = MyGLRenderer.startLineStrip;

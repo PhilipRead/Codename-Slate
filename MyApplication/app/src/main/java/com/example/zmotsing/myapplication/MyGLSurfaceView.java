@@ -228,6 +228,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
                     moveNodeTimer.purge();
                     nodeIsTapped = true;
                 }
+                if(nodeMoveMode) {
+                    nodeMovedFinished = true;
+                }
                 nodeMoveMode = false;
                 swipeMode = true;
         }

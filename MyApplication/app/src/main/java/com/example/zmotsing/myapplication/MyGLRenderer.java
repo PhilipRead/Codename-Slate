@@ -25,6 +25,8 @@ import com.example.zmotsing.myapplication.Backend.BackendLogic;
 import com.example.zmotsing.myapplication.Buttons.*;
 import com.example.zmotsing.myapplication.Nodes.*;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,8 +46,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     //region Renderer Variables
     final Handler TnHandler = new Handler();
 
-    private int[] Textures = new int[1]; //textures pointers
-    private int activeTexture = 0; //which texture is active (by index)
+   // private int[] Textures = new int[1]; //textures pointers
+   // private int activeTexture = 0; //which texture is active (by index)
 
     int i = 0;
     private static Context myContext;
@@ -61,7 +63,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static String rightBuffer,leftBuffer,curSpinVal;
     public static Coord TouchEventCoord,TouchDownCoord,actionDownCoord,actionDownCoordGL, pointerDownCoord,pointerDownCoordGL,pointerMovedCoord,pointerMovedCoordGL,actionMovedCoord,actionMovedCoordGL;
     public static double spacing;
-    public static Node curPressed,nodeWaitingBind,leftNode,rightNode;
+    public static Node curPressed,nodeWaitingBind,leftNode,rightNode,nodeMovedNode;
     public static int curSpinIndex;
     float viewwidth,viewheight;
     public static CopyOnWriteArrayList<Node> MasterNodeList = new CopyOnWriteArrayList<>();
@@ -265,14 +267,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }else if(nodeMoved){
             nodeMoved = false;
             actionMovedCoordGL = GetWorldCoords(gl, actionMovedCoord);
-            Node tempNode = getNodeTouched(actionMovedCoordGL, MasterNodeList, false);
+            nodeMovedNode = (nodeMovedNode ==null)?getNodeTouched(actionMovedCoordGL, MasterNodeList, false):nodeMovedNode;
 
-            if(tempNode != null) {
-                int tempint = MasterNodeList.indexOf(tempNode);
+            if(nodeMovedNode != null) {
+                int tempint = MasterNodeList.indexOf(nodeMovedNode);
                 Coord tempc = MasterControlPoints.get(tempint);
                 tempc.X =actionMovedCoordGL.X;
                 tempc.Y =actionMovedCoordGL.Y;
-                tempNode.setCoord(tempc);
+                nodeMovedNode.setCoord(tempc);
                 RedrawLine = true;
             }
 
@@ -304,6 +306,29 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 CurrControlPoints = tempNode.controlPoints;
                 CurrNodeList = tempNode.nodeList;
             }
+
+        }
+        if(nodeMovedFinished)
+        {
+            nodeMovedFinished = false;
+            Node temp = nodeMovedNode;
+            nodeMovedNode = null;
+            if (temp instanceof EndNode) {
+                ArrayList<Node> tempNodes = getNodesTouched(actionDownCoordGL, MasterNodeList, false);
+                if (tempNodes.size() == 2) {
+                    Node temp2 = tempNodes.get(1);
+                    Node arg1, arg2;
+                    if (tempNodes.get(0) == temp) {
+                        arg1 = temp;
+                        arg2 = temp2;
+                    } else {
+                        arg1 = temp2;
+                        arg2 = temp;
+                    }
+                    connectEndNode(arg1, arg2);
+                }
+            }
+
 
         }
         //endregion
@@ -484,6 +509,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glLoadIdentity();
     }
 
+    public void connectEndNode(Node EndNode, Node destination)
+    {
+        EndNode.controlPoints.remove(EndNode.co);
+        EndNode.nodeList.remove(EndNode);
+        EndNode.controlPoints.add(destination.co);
+        EndNode.nodeList.add(destination);
+        int i =MasterNodeList.indexOf(EndNode);
+        MasterControlPoints.remove(i);
+        MasterControlPoints.remove(i);
+        Log.w("HRRRRRRRRRRRRRRRRR","JFJFFFFFFFFFFFFF");
+    }
     public void switchBackToFrustum(GL10 gl)
     {
         gl.glEnable(gl.GL_DEPTH_TEST);
@@ -947,6 +983,25 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public void setContext(Context context) {
         myContext = context;
+    }
+
+    public ArrayList<Node> getNodesTouched(Coord glCoord, CopyOnWriteArrayList<Node> nList, boolean isOrtho)
+    {
+        int offset = isOrtho? 4:1;
+        ArrayList<Node> tempNodes = new ArrayList<>();
+        float x = glCoord.X/offset;
+        float y = glCoord.Y/offset;
+        float increaseBounds = .1f;
+        for (int j = nList.size() - 1; j >= 0; j--) {
+            Node c = nList.get(j);
+            if (x > (c.LBound-increaseBounds) && x < (increaseBounds + c.RBound) && y < (increaseBounds + c.UBound) && y > (c.DBound-increaseBounds)) {
+                Log.w("Node dims", "Coord: (" + c.getCoord().X + " , " + c.getCoord().Y + ")" + "     width: " + c.Width + "    height: " + c.Height);
+                Log.w("Node TOUCHED", "Coord: (" + x + " , " + y + ")" + "At index:" + j);
+                tempNodes.add(c);
+            }
+        }
+
+        return tempNodes;
     }
 
     public Node getNodeTouched(Coord glCoord, CopyOnWriteArrayList<Node> nList, boolean isOrtho)

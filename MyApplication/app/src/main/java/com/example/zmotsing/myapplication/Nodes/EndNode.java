@@ -48,6 +48,6 @@ public class EndNode extends Node {
 
     @Override
     public String getTitle() {
-        return "start";
+        return "end";
     }
 }

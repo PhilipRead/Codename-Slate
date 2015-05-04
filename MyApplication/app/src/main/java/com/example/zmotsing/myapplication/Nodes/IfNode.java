@@ -65,10 +65,14 @@ public class IfNode extends Node {
             {
                 ((IfNode)element).translateNodes(x,y);
             }
-            Coord co = element.getCoord();
-            co.X += x;
-            co.Y += y;
-            element.setCoord(co);
+
+            if(!(!(element instanceof EndNode) && i == (ifNodes.size() - 1)))
+            {
+                Coord co = element.getCoord();
+                co.X += x;
+                co.Y += y;
+                element.setCoord(co);
+            }
             i++;
         }
     }
