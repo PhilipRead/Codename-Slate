@@ -90,6 +90,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static Node nodeWaitingBind;
     public static Node leftNode;
     public static Node rightNode;
+    public static int curSpinIndex;
     public static String curSpinVal;
     public static boolean nodeIsTapped = false;
     float viewwidth;
@@ -742,7 +743,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     NodesToLoad.add(n);
                     BackendLogic.initializeIfNode(n.getID());
                     nodeWaitingBind = n;
-
+                    curSpinIndex = 0;
 
                     Activity thisAct = (Activity) myContext;
                     thisAct.runOnUiThread(new Runnable() {
@@ -938,10 +939,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         ArrayAdapter<String> adapterIF = new ArrayAdapter<String>(myContext,
                 android.R.layout.simple_spinner_item, arraySpinnerIF);
         ifSpinner.setAdapter(adapterIF);
+        ifSpinner.setSelection(curSpinIndex);
         ifSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 curSpinVal = parent.getItemAtPosition(position).toString();
+                curSpinIndex = position;
             }
 
             @Override
