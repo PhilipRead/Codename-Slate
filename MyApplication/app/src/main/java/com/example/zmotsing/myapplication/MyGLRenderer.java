@@ -1036,6 +1036,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     //region Menu fold
     public static void ifMenu()
     {
+        lBindMode = false;
+        rBindMode = false;
+
         Spinner ifSpinner = new Spinner(myContext);
 
         String[] arraySpinnerIF = new String[] {
@@ -1096,6 +1099,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static void mathMenu()
     {
+        lBindMode = false;
+        rBindMode = false;
+
         Spinner mathSpinner = new Spinner(myContext);
 
         String[] arraySpinnerMath = new String[] {
