@@ -258,4 +258,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public boolean caluculateMath(int nodeID) {
         return BackendLogic.calculateMath(nodeID);
     }
+
+    public void performSet(int nodeID) {
+        BackendLogic.doSet(nodeID);
+    }
 }

@@ -847,7 +847,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     rightNode = null;
                     setBindMode = true;
                     n = new SetNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
-                    //BackendLogic.initializeSetNode(n.getID());
+                    BackendLogic.initializeSetNode(n.getID());
                     nodeWaitingBind = n;
 
                     thisAct.runOnUiThread(new Runnable() {
@@ -1360,12 +1360,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static void bindSet(){
         if(rightNode != null)
         {
-            //BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightNode.getID());
+            BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightNode.getID());
         }
         else
         {
             boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
-           // BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightBuffer, tempIsNum);
+            BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightBuffer, tempIsNum);
         }
 
         setBindMode = false;

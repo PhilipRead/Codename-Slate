@@ -6,10 +6,10 @@ package com.example.zmotsing.myapplication.Backend;
 
 public class BackendNode
 {
-    private int id;
-    private String value;
+    protected int id;
+    protected String value;
     protected boolean bindable;
-    private boolean hasNumericValue;
+    protected boolean hasNumericValue;
 
     BackendNode(int i)
     {

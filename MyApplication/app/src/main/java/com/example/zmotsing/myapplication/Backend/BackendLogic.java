@@ -158,5 +158,37 @@ public class BackendLogic
         return tempMath.computeValue();
     }
 
+//Set Methods
+    public static void initializeSetNode(int id)
+    {
+        SetNode node = new SetNode(id);
+        logicNodes.add(node);
+    }
+
+    public static void setSetNode(int id, int storeID, int bindID)
+    {
+        SetNode tempSet = (SetNode) findNode(id);
+        StorageNode tempStore = (StorageNode) findNode(storeID);
+        BackendNode tempBind = (BackendNode) findNode(bindID);
+
+        tempSet.setStoreNode(tempStore);
+        tempSet.set_rBind(tempBind);
+    }
+
+    public static void setSetNode(int id, int storeID, String constValue, boolean isNumber)
+    {
+        SetNode tempSet = (SetNode) findNode(id);
+        StorageNode tempStore = (StorageNode) findNode(storeID);
+
+        tempSet.setStoreNode(tempStore);
+        tempSet.setValue(constValue, isNumber);
+    }
+
+    public static void doSet(int id)
+    {
+        SetNode tempSet = (SetNode) findNode(id);
+
+        tempSet.doSet();
+    }
 
 }

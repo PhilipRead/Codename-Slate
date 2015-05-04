@@ -30,8 +30,7 @@ public class SetNode extends Node {
     public void action(MyGLSurfaceView SV)
     {
         Log.w("NODEACTION", "SET");
-       // MyGLRenderer.Tn.stop();
-       // SV.getOutput(this.getID());
+        SV.performSet(this.getID());
     }
 
     @Override
