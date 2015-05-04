@@ -19,7 +19,7 @@ public class PlayButton extends Node {
     public PlayButton(Coord c) {
         super(c,null,null);
         drawableInt = R.drawable.playbutton;
-        //drawableIntOptional = R.drawable.playButton_pressed;
+        drawableIntOptional = R.drawable.playbutton_pressed;
         scalingFactor = .2f;
         AddToLine = 0;
 
@@ -48,7 +48,7 @@ public class PlayButton extends Node {
     @Override
     protected void setSprite() {
         spr = new Sprite(drawableInt, co.X, co.Y, Width, Height);
-        sprOptional = new Sprite(drawableInt, co.X, co.Y, Width, Height);
+        sprOptional = new Sprite(drawableIntOptional, co.X, co.Y, Width, Height);
         setBounds();
     }
 

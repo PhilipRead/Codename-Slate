@@ -57,7 +57,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     static float transX,transY,transZ = -4;
     public MyGLSurfaceView surfaceview;
     public MyGLRenderer() {}
-    public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped;
+    public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped,setBindMode;
     public static String rightBuffer,leftBuffer,curSpinVal;
     public static Coord TouchEventCoord,TouchDownCoord,actionDownCoord,actionDownCoordGL, pointerDownCoord,pointerDownCoordGL,pointerMovedCoord,pointerMovedCoordGL,actionMovedCoord,actionMovedCoordGL;
     public static double spacing;
@@ -82,6 +82,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static CopyOnWriteArrayList<String> inputTxtToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<String> outputTxtToLoad = new CopyOnWriteArrayList<>();
     public static CopyOnWriteArrayList<Node> bindableNodes = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Node> storageNodes = new CopyOnWriteArrayList<>();
     //endregion
 
     private void setupGraphic(GL10 gl, Node n, boolean isOrtho)
@@ -416,7 +417,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         leftNode = bindNode;
                         if(rightSet)
                         {
-                            bindTriple();
+                            if(setBindMode)
+                                bindSet();
+                            else
+                                bindTriple();
                         }
                         else
                         {
@@ -427,8 +431,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                 public void run() {
                                     if(nodeWaitingBind.getTitle().equals("if"))
                                         ifMenu();
-                                    else
+                                    else if(nodeWaitingBind.getTitle().equals("math"))
                                         mathMenu();
+                                    else
+                                        setMenu();
                                 }
                             });
                         }
@@ -750,6 +756,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 case STORAGE:
                     //region StorageNode Fold
                     n = new StorageNode(new Coord(x, y),CurrNodeList,CurrControlPoints);
+                    storageNodes.add(n);
                     final Node curNodeStr = n;
 
                     AlertDialog.Builder builderStr = new AlertDialog.Builder(myContext);
@@ -834,7 +841,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 //endregion
                 case SET:
                     //region SetNode Fold
+                    leftSet = false;
+                    rightSet = false;
+                    leftNode = null;
+                    rightNode = null;
+                    setBindMode = true;
                     n = new SetNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
+                    //BackendLogic.initializeSetNode(n.getID());
+                    nodeWaitingBind = n;
+
+                    thisAct.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setMenu();
+                        }
+                    });
                     break;
                     //endregion
                 case MATH:
@@ -1065,6 +1086,38 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         alertIF.show();
     }
 
+    public static void setMenu()
+    {
+        AlertDialog.Builder builderSet = new AlertDialog.Builder(myContext);
+        builderSet.setPositiveButton("Value", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Activity thisAct = (Activity) myContext;
+                        thisAct.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rightBindMenu();
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton("Pick Storage Node", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        leftBuffer = null;
+                        bindMode = true;
+                        lBindMode = true;
+                        dialog.dismiss();
+                    }
+                });
+
+
+        AlertDialog alertIF = builderSet.create();
+        alertIF.show();
+    }
+
     public static void rightBindMenu()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
@@ -1098,7 +1151,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                                         if(leftSet)
                                         {
-                                            bindTriple();
+                                            if(setBindMode)
+                                                bindSet();
+                                            else
+                                                bindTriple();
                                             ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                                             dialog.dismiss();
                                             return true;
@@ -1116,8 +1172,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                             public void run() {
                                                 if(nodeWaitingBind.getTitle().equals("if"))
                                                     ifMenu();
-                                                else
+                                                else if(nodeWaitingBind.getTitle().equals("math"))
                                                     mathMenu();
+                                                else
+                                                    setMenu();
                                             }
                                         });
 
@@ -1219,8 +1277,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                             public void run() {
                                                 if(nodeWaitingBind.getTitle().equals("if"))
                                                     ifMenu();
-                                                else
+                                                else if(nodeWaitingBind.getTitle().equals("math"))
                                                     mathMenu();
+                                                else
+                                                    setMenu();
                                             }
                                         });
                                         return true;
@@ -1295,5 +1355,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             boolean tempRightNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
             BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftBuffer, tempLeftNum, curSpinVal, rightBuffer, tempRightNum);
         }
+    }
+
+    public static void bindSet(){
+        if(rightNode != null)
+        {
+            //BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightNode.getID());
+        }
+        else
+        {
+            boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+           // BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightBuffer, tempIsNum);
+        }
+
+        setBindMode = false;
     }
 }
