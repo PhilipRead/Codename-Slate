@@ -445,7 +445,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                             thisAct.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ifMenu();
+                                    if(nodeWaitingBind.getTitle().equals("if"))
+                                        ifMenu();
+                                    else
+                                        mathMenu();
                                 }
                             });
                         }
@@ -464,7 +467,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                             thisAct.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ifMenu();
+                                    if(nodeWaitingBind.getTitle().equals("if"))
+                                        ifMenu();
+                                    else
+                                        mathMenu();
                                 }
                             });
                         }
@@ -629,6 +635,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         Node n = null;
+        Activity thisAct = (Activity) myContext;
         if(nodeTypeCreate != null)
         {
             switch  (nodeTypeCreate)
@@ -749,7 +756,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     nodeWaitingBind = n;
                     curSpinIndex = 0;
 
-                    Activity thisAct = (Activity) myContext;
                     thisAct.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -850,7 +856,20 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     //endregion
                 case MATH:
                     //region MathNode Fold
+                    leftSet = false;
+                    rightSet = false;
+                    leftNode = null;
+                    rightNode = null;
                     n = new MathNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
+                    nodeWaitingBind = n;
+                    curSpinIndex = 0;
+
+                    thisAct.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mathMenu();
+                        }
+                    });
                     break;
                     //endregion
             }
@@ -943,8 +962,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     //region Menu fold
     public static void ifMenu()
     {
-        final Node tempNode = nodeWaitingBind;
-
         Spinner ifSpinner = new Spinner(myContext);
 
         String[] arraySpinnerIF = new String[] {
@@ -977,7 +994,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         thisAct.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                rightBindMenu(tempNode);
+                                rightBindMenu();
                             }
                         });
 
@@ -991,7 +1008,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         thisAct.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                leftBindMenu(tempNode);
+                                leftBindMenu();
                             }
                         });
 
@@ -1003,10 +1020,68 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         alertIF.show();
     }
 
-    public static void rightBindMenu(Node parentNode)
+    public static void mathMenu()
     {
-        final Node tempNode = parentNode;
+        Spinner mathSpinner = new Spinner(myContext);
 
+        String[] arraySpinnerMath = new String[] {
+                "+", "-", "*", "/", "^", "mod"
+        };
+        ArrayAdapter<String> adapterMath = new ArrayAdapter<String>(myContext,
+                android.R.layout.simple_spinner_item, arraySpinnerMath);
+        mathSpinner.setAdapter(adapterMath);
+        mathSpinner.setSelection(curSpinIndex);
+        mathSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                curSpinVal = parent.getItemAtPosition(position).toString();
+                curSpinIndex = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        AlertDialog.Builder builderIf = new AlertDialog.Builder(myContext);
+        builderIf.setView(mathSpinner)
+                .setPositiveButton("Right Value", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Activity thisAct = (Activity) myContext;
+                        thisAct.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rightBindMenu();
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton("Left Value", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Activity thisAct = (Activity) myContext;
+                        thisAct.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                leftBindMenu();
+                            }
+                        });
+
+                    }
+                });
+
+
+        AlertDialog alertIF = builderIf.create();
+        alertIF.show();
+    }
+
+    public static void rightBindMenu()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
         builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -1054,7 +1129,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                         thisAct.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                ifMenu();
+                                                if(nodeWaitingBind.getTitle().equals("if"))
+                                                    ifMenu();
+                                                else
+                                                    mathMenu();
                                             }
                                         });
 
@@ -1105,10 +1183,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         alert.show();
     }
 
-    public static void leftBindMenu(Node parentNode)
+    public static void leftBindMenu()
     {
-        final Node tempNode = parentNode;
-
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
         builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -1156,7 +1232,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                         thisAct.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                ifMenu();
+                                                if(nodeWaitingBind.getTitle().equals("if"))
+                                                    ifMenu();
+                                                else
+                                                    mathMenu();
                                             }
                                         });
                                         return true;
