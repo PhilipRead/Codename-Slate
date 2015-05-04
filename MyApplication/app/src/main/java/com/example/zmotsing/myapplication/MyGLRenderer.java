@@ -658,7 +658,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                             dialog.dismiss();
                         }
                     });
-                    builderOut.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+                    builderOut.setNegativeButton("Constant Value", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             final int nID = curNodeOut.getID();
                             tempBuffer = "";
@@ -1016,7 +1016,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Constant Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 tempBuffer = "";
                 AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
@@ -1118,7 +1118,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Constant Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 tempBuffer = "";
                 AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
