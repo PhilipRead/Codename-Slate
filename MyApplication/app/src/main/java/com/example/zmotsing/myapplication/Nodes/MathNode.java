@@ -29,9 +29,8 @@ public class MathNode extends Node {
     @Override
     public void action(MyGLSurfaceView SV)
     {
-        Log.w("NODEACTION", "MATH");
-       // MyGLRenderer.Tn.stop();
-       // SV.getOutput(this.getID());
+       Log.w("NODEACTION", "MATH");
+       SV.caluculateMath(this.getID());
     }
 
     @Override

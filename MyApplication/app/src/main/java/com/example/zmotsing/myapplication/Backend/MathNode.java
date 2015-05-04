@@ -7,6 +7,7 @@ public class MathNode extends TripleNode {
     MathNode(int id)
     {
         super(id);
+        bindable = true;
     }
 
     public boolean computeValue()

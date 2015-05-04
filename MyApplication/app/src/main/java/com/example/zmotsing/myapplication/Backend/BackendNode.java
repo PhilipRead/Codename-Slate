@@ -8,7 +8,7 @@ public class BackendNode
 {
     private int id;
     private String value;
-    private boolean bindable;
+    protected boolean bindable;
     private boolean hasNumericValue;
 
     BackendNode(int i)

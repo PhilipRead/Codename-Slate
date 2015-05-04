@@ -861,7 +861,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     leftNode = null;
                     rightNode = null;
                     n = new MathNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
-                   // BackendLogic.initializeMathNode(n.getID());
+                    BackendLogic.initializeMathNode(n.getID());
                     nodeWaitingBind = n;
                     curSpinIndex = 0;
 
@@ -871,6 +871,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                             mathMenu();
                         }
                     });
+                    bindableNodes.add(n);
                     break;
                     //endregion
             }

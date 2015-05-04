@@ -255,5 +255,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         return BackendLogic.getIfBool(nodeID);
     }
 
-
+    public boolean caluculateMath(int nodeID) {
+        return BackendLogic.calculateMath(nodeID);
+    }
 }

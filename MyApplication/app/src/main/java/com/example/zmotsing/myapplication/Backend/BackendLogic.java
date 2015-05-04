@@ -146,9 +146,17 @@ public class BackendLogic
     }
 
 //Math Methods
-public static void initializeMathNode(int id)
-{
-    MathNode node = new MathNode(id);
-    logicNodes.add(node);
-}
+    public static void initializeMathNode(int id)
+    {
+        MathNode node = new MathNode(id);
+        logicNodes.add(node);
+    }
+
+    public static boolean calculateMath(int id)
+    {
+        MathNode tempMath = (MathNode) findNode(id);
+        return tempMath.computeValue();
+    }
+
+
 }
