@@ -59,7 +59,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     static float transX,transY,transZ = -4;
     public MyGLSurfaceView surfaceview;
     public MyGLRenderer() {}
-    public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped,setBindMode;
+    public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped,setBindMode,setL_BindMode;
     public static String rightBuffer,leftBuffer,curSpinVal;
     public static Coord TouchEventCoord,TouchDownCoord,actionDownCoord,actionDownCoordGL, pointerDownCoord,pointerDownCoordGL,pointerMovedCoord,pointerMovedCoordGL,actionMovedCoord,actionMovedCoordGL;
     public static double spacing;
@@ -432,11 +432,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             if(bindMode)
             {
                 switchBackToFrustum(gl);
-                Node bindNode = getNodeTouched(GetWorldCoords(gl, TouchEventCoord), bindableNodes, false);
+
+                Node bindNode;
+                if(setL_BindMode)
+                   bindNode = getNodeTouched(GetWorldCoords(gl, TouchEventCoord), storageNodes, false);
+                else
+                   bindNode = getNodeTouched(GetWorldCoords(gl, TouchEventCoord), bindableNodes, false);
+
                 switchToOrtho(gl);
                 if(bindNode != null)
                 {
                     bindMode = false;
+                    setL_BindMode = false;
                     if(lBindMode)
                     {
                         leftNode = bindNode;
@@ -469,7 +476,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         rightNode = bindNode;
                         if(leftSet)
                         {
-                            bindTriple();
+                            if(setBindMode)
+                                bindSet();
+                            else
+                                bindTriple();
                         }
                         else
                         {
@@ -480,8 +490,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                 public void run() {
                                     if(nodeWaitingBind.getTitle().equals("if"))
                                         ifMenu();
-                                    else
+                                    else if(nodeWaitingBind.getTitle().equals("math"))
                                         mathMenu();
+                                    else
+                                        setMenu();
                                 }
                             });
                         }
@@ -882,6 +894,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     leftNode = null;
                     rightNode = null;
                     setBindMode = true;
+                    setL_BindMode = false;
                     n = new SetNode(new Coord(x,y), CurrNodeList, CurrControlPoints);
                     BackendLogic.initializeSetNode(n.getID());
                     nodeWaitingBind = n;
@@ -1143,6 +1156,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static void setMenu()
     {
+        lBindMode = false;
+        rBindMode = false;
+
         AlertDialog.Builder builderSet = new AlertDialog.Builder(myContext);
         builderSet.setPositiveButton("Value", new DialogInterface.OnClickListener() {
                     @Override
@@ -1164,6 +1180,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         leftBuffer = null;
                         bindMode = true;
                         lBindMode = true;
+                        setL_BindMode = true;
                         dialog.dismiss();
                     }
                 });
