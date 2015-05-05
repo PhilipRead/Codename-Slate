@@ -56,7 +56,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static LineStrip startLineStrip;
 
     public static NodeType nodeTypeCreate = null;
-    static float transX,transY,transZ = -4;
+    static float transX,transY = 0;
+    static float transZ = -4;
     public MyGLSurfaceView surfaceview;
     public MyGLRenderer() {}
     public static boolean nodeMovedFinished,Touched,bindMode,lBindMode,rBindMode,leftSet,rightSet,action_flag,TouchedDown,RedrawLine,actionDown,actionMoved,nodeMoved,pointerDown,pinchMoved,nodeIsTapped,setBindMode,setL_BindMode;
@@ -114,8 +115,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
             //fin the opengl width and height
             n.setCoord(NewScreenCoord);
-            n.Height = NewScreenCoord.Y - ScreenBRCoord.Y;
-            n.Width = ScreenBRCoord.X - NewScreenCoord.X;
+            n.Height = (NewScreenCoord.Y - ScreenBRCoord.Y)/(-.25f*transZ);
+            n.Width = (ScreenBRCoord.X - NewScreenCoord.X)/(-.25f*transZ);
 
         }
 
@@ -279,7 +280,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
 
 
-        }else if(false)
+        }else if(pinchMoved)
                 //(pinchMoved)
         {
             pinchMoved = false;
@@ -1012,7 +1013,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public ArrayList<Node> getNodesTouched(Coord glCoord, CopyOnWriteArrayList<Node> nList, boolean isOrtho)
     {
-        int offset = isOrtho? 4:1;
+        float offset = isOrtho? (transZ*-1f):1;
         ArrayList<Node> tempNodes = new ArrayList<>();
         float x = glCoord.X/offset;
         float y = glCoord.Y/offset;
@@ -1031,7 +1032,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public Node getNodeTouched(Coord glCoord, CopyOnWriteArrayList<Node> nList, boolean isOrtho)
     {
-        int offset = isOrtho? 4:1;
+        float offset = isOrtho? (transZ*-1f):1;
         float x = glCoord.X/offset;
         float y = glCoord.Y/offset;
         for (int j = nList.size() - 1; j >= 0; j--) {
