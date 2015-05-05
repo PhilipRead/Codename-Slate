@@ -1,30 +1,21 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
-import android.text.Editable;
-import android.text.method.KeyListener;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.zmotsing.myapplication.Backend.BackendLogic;
@@ -32,7 +23,6 @@ import com.example.zmotsing.myapplication.Backend.BackendLogic;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.example.zmotsing.myapplication.MyGLRenderer.*;
 
@@ -238,17 +228,28 @@ public class MyGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
+    public static int numlines = 0;
+
     public void getInput() {
         textView.append("> ");
 
         inputBuffer = "";
         ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        Log.w("INFO", textView.getScrollBarSize() + "");
+        numlines++;
+        if(numlines > 9) {
+            textView.setScrollY(numlines * 11 - 108);
+        }
     }
 
     public void getOutput(int nodeID) {
         String curOutput = BackendLogic.getBackendVal(nodeID);
-
         textView.append(curOutput + "\n");
+        numlines++;
+        if(numlines > 9) {
+            textView.setScrollY(numlines * 11 - 108);
+        }
+
 
         Tn.start();
     }
