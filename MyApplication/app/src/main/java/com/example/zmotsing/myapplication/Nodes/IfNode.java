@@ -29,6 +29,7 @@ public class IfNode extends Node {
     public CopyOnWriteArrayList<Coord> ifControlPoints = new CopyOnWriteArrayList<>();
     CopyOnWriteArrayList<Node> ifNodes = new CopyOnWriteArrayList<>();
     LineStrip truepath;
+    boolean drawnif = false;
     public IfNode(Coord c,CopyOnWriteArrayList<Node> nlist, CopyOnWriteArrayList<Coord> points) {
         super(c,nlist,points);
         drawableInt = R.drawable.ifnode;
@@ -63,7 +64,10 @@ public class IfNode extends Node {
             Node element = irr.next();
             if(element instanceof IfNode)
             {
-                ((IfNode)element).translateNodes(x,y);
+                if(!element.drawn) {
+                    element.drawn = true;
+                    ((IfNode) element).translateNodes(x, y);
+                }
             }
 
             if(!(!(element instanceof EndNode) && i == (ifNodes.size() - 1)))
@@ -90,32 +94,34 @@ public class IfNode extends Node {
 
     public void drawTruePath(GL10 gl,boolean redrawLines)
     {
-        if (redrawLines)
-        {
-            if(ifControlPoints.size() > 2)
-            {
-                truepath = new LineStrip(Spline.interpolate(ifControlPoints, 60, CatmullRomType.Chordal));
+
+        if(!drawn) {
+            drawn = true;
+            if (redrawLines) {
+                if (ifControlPoints.size() > 2) {
+                    truepath = new LineStrip(Spline.interpolate(ifControlPoints, 60, CatmullRomType.Chordal));
+
+                } else if (ifControlPoints.size() == 2) {
+                    truepath = new LineStrip(ifControlPoints);
+                }
+            }
+
+            if (truepath != null) {
+                truepath.draw(gl); // ( NEW )
 
             }
-            else if(ifControlPoints.size() == 2)
-            {
-                truepath = new LineStrip(ifControlPoints);
+            Iterator<Node> irr = ifNodes.iterator();
+            irr.next();
+            while (irr.hasNext()) {
+                Node temp = irr.next();
+                if (temp instanceof IfNode) {
+                    if(!temp.drawn) {
+                        temp.drawn = true;
+                        ((IfNode) temp).drawTruePath(gl, redrawLines);
+                    }
+                }
+                temp.spr.draw(gl);
             }
-        }
-
-        if (truepath != null) {
-            truepath.draw(gl); // ( NEW )
-
-        }
-        Iterator<Node> irr = ifNodes.iterator();
-        irr.next();
-        while(irr.hasNext()) {
-            Node temp = irr.next();
-            if(temp instanceof IfNode)
-            {
-                ((IfNode)temp).drawTruePath(gl, redrawLines);
-            }
-            temp.spr.draw(gl);
         }
     }
     @Override

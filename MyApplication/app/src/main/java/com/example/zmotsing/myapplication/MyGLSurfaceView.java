@@ -37,7 +37,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     MyGLRenderer r = new MyGLRenderer();
 
     AlertDialog.Builder builder;
-    TextView textView;
+    public TextView textView;
 
     public MyGLSurfaceView(Context context) {
         super(context);

@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public abstract class Node {
 
+    public boolean drawn = false;
     protected Coord co;
     protected float Z;
     protected float Width;

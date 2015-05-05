@@ -132,7 +132,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        //region Load in all graphics for new nodes
+        // Load in all graphics for new nodes
         for (Node element : NodesToLoad) {
             setupGraphic(gl,element,false);
             if(ifTempList != null  && element instanceof IfNode)
@@ -210,9 +210,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
 
         outputTxtToLoad.clear();
-        //endregion
 
-        //region Redraw linestrip
+        //Redraw Logic
+
         boolean redrawAllLines = false;
         if (RedrawLine)
         {
@@ -229,7 +229,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Tn.tLineStrip = startLineStrip;
             RedrawLine = false;
         }
-        //endregion
 
         //region Touch Motion Detection Logic
         if(actionDown){
@@ -245,7 +244,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         MyGLSurfaceView.nodeMoveMode = true;
                         nodeIsTapped = true;
                     }
-                }, 800);
+                }, 300);
             }
         }
 
@@ -299,7 +298,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         }
-        if(nodeIsTapped)
+        if(nodeIsTapped && !bindMode)
         {
             nodeIsTapped = false;
             Node tempNode = getNodeTouched(actionDownCoordGL, MasterNodeList, false);
@@ -358,8 +357,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                 if(element instanceof IfNode)
                 {
-                    ((IfNode)element).translateNodes(tempX,tempY);
-                    ((IfNode)element).ifControlPoints.set(0,co);
+                    if(!element.drawn) {
+                        element.drawn = true;
+                        ((IfNode) element).translateNodes(tempX, tempY);
+                        ((IfNode) element).ifControlPoints.set(0, co);
+                    }
                 }
                 if(element instanceof EndNode)
                 {
@@ -376,6 +378,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Tn.setCoord(co);
 
             RedrawLine = true;
+        }
+
+        for (Node element : MasterNodeList) {
+            element.drawn = false;
         }
         //endregion
 
@@ -399,12 +405,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         }
         for (Node element : StartNodeList) {
-            if(element instanceof IfNode)
-            {
-                ((IfNode)element).drawTruePath(gl, redrawAllLines);
-            }
-            element.spr.draw(gl);
+                if(element instanceof IfNode)
+                {
+                        ((IfNode) element).drawTruePath(gl, redrawAllLines);
+                }
+                element.spr.draw(gl);
         }
+        for (Node element : MasterNodeList) {
+            element.drawn = false;
+        }
+
+
         redrawAllLines = false;
         Tn.spr.draw(gl);
 
@@ -534,13 +545,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         endNode.nodeList.remove(endNode);
         endNode.controlPoints.add(destination.co);
         endNode.nodeList.add(destination);
-        if(endNode.nodeList.contains(endNode)&& destination.nodeList.contains(endNode)) {
+        if(destination instanceof IfNode && endNode.nodeList.contains(endNode)&& destination.nodeList.contains(endNode))
+        {
+        }
+        else
+        {
 
         }
         int i = MasterNodeList.indexOf(endNode);
         MasterControlPoints.remove(i);
         MasterNodeList.remove(i);
-        Log.w("HRRRRRRRRRRRRRRRRR","JFJFFFFFFFFFFFFF");
     }
 
     public void switchBackToFrustum(GL10 gl)

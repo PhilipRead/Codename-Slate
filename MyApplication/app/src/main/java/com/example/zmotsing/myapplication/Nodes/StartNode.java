@@ -30,9 +30,8 @@ public class StartNode extends Node {
     @Override
     public void action(MyGLSurfaceView SV)
     {
-//        Log.w("NODEACTION", "OUTPUT");
-//        MyGLRenderer.Tn.stop();
-//        SV.getOutput();
+        SV.textView.setText("");
+        MyGLSurfaceView.numlines=0;
     }
 
     @Override
