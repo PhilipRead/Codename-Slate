@@ -138,22 +138,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             {
                 boolean ifHasEndNode = (ifTempList.size() > 1);
 
-                if (true)
-                {
+//                if (true)
+//                {
 
                     ifTempList.add(ifTempList.size()-1,element);
                     ifTempPoints.add(ifTempPoints.size()-1,element.getCoord());
                     CurrNodeList.add(element);
                     CurrControlPoints.add(element.getCoord());
-                }
-                else
-                {
-
-                    ifTempList.add(element);
-                    ifTempPoints.add(element.getCoord());
-                    CurrNodeList.add(element);
-                    CurrControlPoints.add(element.getCoord());
-                }
+//                }
+//                else
+//                {
+//
+//                    ifTempList.add(element);
+//                    ifTempPoints.add(element.getCoord());
+//                    CurrNodeList.add(element);
+//                    CurrControlPoints.add(element.getCoord());
+//                }
                 ifTempList = null;
             }
             else
@@ -314,11 +314,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Node temp = nodeMovedNode;
             nodeMovedNode = null;
             if (temp instanceof EndNode) {
-                ArrayList<Node> tempNodes = getNodesTouched(actionDownCoordGL, MasterNodeList, false);
+                ArrayList<Node> tempNodes = getNodesTouched(actionMovedCoordGL, MasterNodeList, false);
                 if (tempNodes.size() == 2) {
                     Node temp2 = tempNodes.get(1);
+                    temp = tempNodes.get(0);
                     Node arg1, arg2;
-                    if (tempNodes.get(0) == temp) {
+                    if (temp instanceof EndNode) {
                         arg1 = temp;
                         arg2 = temp2;
                     } else {
@@ -343,8 +344,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             float tempY = transY;
             transX = transY = 0;
             int i = 0;
+            ArrayList<Node> temp = new ArrayList<Node>();
             for (Node element : StartNodeList) {
-
+                if(temp.contains(element))
+                {
+                    continue;
+                }
+                temp.add(element);
                 Coord co = element.getCoord();
                 co.X += tempX;
                 co.Y += tempY;
@@ -521,17 +527,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glLoadIdentity();
     }
 
-    public void connectEndNode(Node EndNode, Node destination)
+    public void connectEndNode(Node endNode, Node destination)
     {
-        EndNode.controlPoints.remove(EndNode.co);
-        EndNode.nodeList.remove(EndNode);
-        EndNode.controlPoints.add(destination.co);
-        EndNode.nodeList.add(destination);
-        int i =MasterNodeList.indexOf(EndNode);
+        endNode.controlPoints.remove(endNode.co);
+        endNode.nodeList.remove(endNode);
+        endNode.controlPoints.add(destination.co);
+        endNode.nodeList.add(destination);
+        if(endNode.nodeList.contains(endNode)&& destination.nodeList.contains(endNode)) {
+
+        }
+        int i = MasterNodeList.indexOf(endNode);
         MasterControlPoints.remove(i);
-        MasterControlPoints.remove(i);
+        MasterNodeList.remove(i);
         Log.w("HRRRRRRRRRRRRRRRRR","JFJFFFFFFFFFFFFF");
     }
+
     public void switchBackToFrustum(GL10 gl)
     {
         gl.glEnable(gl.GL_DEPTH_TEST);
