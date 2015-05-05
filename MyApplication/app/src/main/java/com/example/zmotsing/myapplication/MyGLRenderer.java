@@ -700,7 +700,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     final Node curNodeOut = n;
 
                     AlertDialog.Builder builderOut = new AlertDialog.Builder(myContext);
-                    builderOut.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+                    builderOut.setCancelable(false)
+                            .setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             nodeWaitingBind = curNodeOut;
                             lBindMode = false;
@@ -818,7 +819,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     final Node curNodeStr = n;
 
                     AlertDialog.Builder builderStr = new AlertDialog.Builder(myContext);
-                    builderStr.setPositiveButton("Set Empty", new DialogInterface.OnClickListener() {
+                    builderStr.setCancelable(false)
+                            .setPositiveButton("Set Empty", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             BackendLogic.initializeStorageNode(curNodeStr.getID());
                             bindableNodes.add(curNodeStr);
@@ -1072,7 +1074,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         });
 
         AlertDialog.Builder builderIf = new AlertDialog.Builder(myContext);
-        builderIf.setView(ifSpinner)
+        builderIf.setCancelable(false)
+                .setView(ifSpinner)
                 .setPositiveButton("Right Value", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1135,7 +1138,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         });
 
         AlertDialog.Builder builderIf = new AlertDialog.Builder(myContext);
-        builderIf.setView(mathSpinner)
+        builderIf.setCancelable(false)
+                .setView(mathSpinner)
                 .setPositiveButton("Right Value", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1176,7 +1180,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         rBindMode = false;
 
         AlertDialog.Builder builderSet = new AlertDialog.Builder(myContext);
-        builderSet.setPositiveButton("Value", new DialogInterface.OnClickListener() {
+        builderSet.setCancelable(false)
+                .setPositiveButton("Value", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -1209,7 +1214,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static void rightBindMenu()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
-        builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+        builder.setCancelable(false)
+               .setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 rightBuffer = null;
                 bindMode = true;
@@ -1317,7 +1323,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static void leftBindMenu()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
-        builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+        builder.setCancelable(false)
+               .setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 leftBuffer = null;
                 bindMode = true;
@@ -1428,19 +1435,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
             else
             {
-                boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+                boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
                 BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftNode.getID(), curSpinVal, rightBuffer, tempIsNum);
             }
         }
         else if(rightNode != null)
         {
-            boolean tempIsNum = leftBuffer.matches("-?\\d+(\\.\\d+)?");
+            boolean tempIsNum = leftBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
             BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftBuffer, tempIsNum, curSpinVal, rightNode.getID());
         }
         else
         {
-            boolean tempLeftNum = leftBuffer.matches("-?\\d+(\\.\\d+)?");
-            boolean tempRightNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+            boolean tempLeftNum = leftBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
+            boolean tempRightNum = rightBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
             BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftBuffer, tempLeftNum, curSpinVal, rightBuffer, tempRightNum);
         }
     }
@@ -1452,7 +1459,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
         else
         {
-            boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+            boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
             BackendLogic.setSetNode(nodeWaitingBind.getID(), leftNode.getID(), rightBuffer, tempIsNum);
         }
 

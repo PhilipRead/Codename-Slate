@@ -105,7 +105,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                                 textView.append("\n");
                                 ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
-                                boolean tempIsNum = inputBuffer.matches("-?\\d+(\\.\\d+)?");
+                                boolean tempIsNum = inputBuffer.matches("-?\\d+(\\.\\d+)?|-?\\.\\d+");
                                 BackendLogic.updateBackendNode(Tn.curNode.getID(), inputBuffer, tempIsNum);
 
 
