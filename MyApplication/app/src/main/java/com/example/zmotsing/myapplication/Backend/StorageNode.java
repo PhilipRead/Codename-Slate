@@ -5,7 +5,6 @@ package com.example.zmotsing.myapplication.Backend;
  */
 public class StorageNode extends BackendNode
 {
-    private boolean hasNumericValue;
 
     StorageNode(int id)
     {
@@ -15,8 +14,7 @@ public class StorageNode extends BackendNode
 
     StorageNode(int id, String initialValue, boolean isNumber)
     {
-        super(id, initialValue);
-        hasNumericValue = isNumber;
+        super(id, initialValue, isNumber);
         setBindable(true);
     }
 }

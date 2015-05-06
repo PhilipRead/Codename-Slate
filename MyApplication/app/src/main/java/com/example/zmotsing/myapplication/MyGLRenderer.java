@@ -1,6 +1,7 @@
 package com.example.zmotsing.myapplication;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,8 +13,12 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.zmotsing.myapplication.Backend.BackendLogic;
@@ -60,6 +65,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean TouchedDown;
     public static boolean Touched;
     public static boolean bindMode;
+    public static boolean lBindMode;
+    public static boolean rBindMode;
+    public static boolean leftSet;
+    public static boolean rightSet;
+    public static String rightBuffer;
+    public static String leftBuffer;
     public static boolean RedrawLine;
     public static Coord actionDownCoord;
     public static Coord actionDownCoordGL;
@@ -77,6 +88,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static boolean pinchMoved;
     public static Node curPressed;
     public static Node nodeWaitingBind;
+    public static Node leftNode;
+    public static Node rightNode;
+    public static String curSpinVal;
     public static boolean nodeIsTapped = false;
     float viewwidth;
     float viewheight;
@@ -416,7 +430,48 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                 if(bindNode != null)
                 {
                     bindMode = false;
-                    BackendLogic.initializeOutputNode(nodeWaitingBind.getID(), bindNode.getID());
+                    if(lBindMode)
+                    {
+                        leftNode = bindNode;
+                        if(rightSet)
+                        {
+                            bindTriple();
+                        }
+                        else
+                        {
+                            leftSet = true;
+                            Activity thisAct = (Activity) myContext;
+                            thisAct.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ifMenu();
+                                }
+                            });
+                        }
+                    }
+                    else if(rBindMode)
+                    {
+                        rightNode = bindNode;
+                        if(leftSet)
+                        {
+                            bindTriple();
+                        }
+                        else
+                        {
+                            rightSet = true;
+                            Activity thisAct = (Activity) myContext;
+                            thisAct.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ifMenu();
+                                }
+                            });
+                        }
+                    }
+                    else
+                    {
+                        BackendLogic.initializeOutputNode(nodeWaitingBind.getID(), bindNode.getID());
+                    }
                 }
 
             }
@@ -591,8 +646,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     builderOut.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             nodeWaitingBind = curNodeOut;
+                            lBindMode = false;
+                            rBindMode = false;
                             bindMode = true;
-                            dialog.cancel();
+
+                            dialog.dismiss();
                         }
                     });
                     builderOut.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
@@ -654,7 +712,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                             ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
-                            dialog.cancel();
+                            dialog.dismiss();
+
                         }
 
                     });
@@ -672,10 +731,28 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     n = new EndNode(new Coord(x, y),CurrNodeList,CurrControlPoints);
                     break;
                 case IF:
+                    //region IFNode Fold
                     ifTempList = CurrNodeList;
                     ifTempPoints = CurrControlPoints;
+                    leftSet = false;
+                    rightSet = false;
+                    leftNode = null;
+                    rightNode = null;
                     n = new IfNode(new Coord(x, y),CurrNodeList,CurrControlPoints);
+                    NodesToLoad.add(n);
+                    BackendLogic.initializeIfNode(n.getID());
+                    nodeWaitingBind = n;
+
+
+                    Activity thisAct = (Activity) myContext;
+                    thisAct.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ifMenu();
+                        }
+                    });
                     break;
+                //endregion
                 case STORAGE:
                     //region StorageNode Fold
                     n = new StorageNode(new Coord(x, y),CurrNodeList,CurrControlPoints);
@@ -686,7 +763,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         public void onClick(DialogInterface dialog, int id) {
                             BackendLogic.initializeStorageNode(curNodeStr.getID());
                             bindableNodes.add(curNodeStr);
-                            dialog.cancel();
+                            dialog.dismiss();
                         }
                     });
                     builderStr.setNegativeButton("Set Initial Value", new DialogInterface.OnClickListener() {
@@ -707,14 +784,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                                         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                                             if (event.getAction() == KeyEvent.ACTION_UP) {
                                                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                                                    if(tempBuffer.matches("-?\\d+(\\.\\d+)?"))
-                                                    {
-                                                        BackendLogic.initializeStorageNode(nID, tempBuffer, true);
-                                                    }
-                                                    else
-                                                    {
-                                                        BackendLogic.initializeStorageNode(nID, tempBuffer, false);
-                                                    }
+                                                    boolean tempIsNum = tempBuffer.matches("-?\\d+(\\.\\d+)?");
+                                                    BackendLogic.initializeStorageNode(nID, tempBuffer, tempIsNum);
 
                                                     bindableNodes.add(curNodeStr);
                                                     ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
@@ -757,7 +828,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
                             ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
-                            dialog.cancel();
+                            dialog.dismiss();
                         }
 
                     });
@@ -774,8 +845,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         {
             return;
         }
-
-        NodesToLoad.add(n);
+        if(!n.getTitle().equals("if"))
+            NodesToLoad.add(n);
     }
 
     public static void translateZ(int z) {
@@ -854,6 +925,294 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         return null;
     }
+    //region Menu fold
+    public static void ifMenu()
+    {
+        final Node tempNode = nodeWaitingBind;
+
+        Spinner ifSpinner = new Spinner(myContext);
+
+        String[] arraySpinnerIF = new String[] {
+                "==", "!=", ">", ">=", "<", "<="
+        };
+        ArrayAdapter<String> adapterIF = new ArrayAdapter<String>(myContext,
+                android.R.layout.simple_spinner_item, arraySpinnerIF);
+        ifSpinner.setAdapter(adapterIF);
+        ifSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                curSpinVal = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        AlertDialog.Builder builderIf = new AlertDialog.Builder(myContext);
+        builderIf.setView(ifSpinner)
+                .setPositiveButton("Right Value", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Activity thisAct = (Activity) myContext;
+                        thisAct.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rightBindMenu(tempNode);
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton("Left Value", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Activity thisAct = (Activity) myContext;
+                        thisAct.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                leftBindMenu(tempNode);
+                            }
+                        });
+
+                    }
+                });
 
 
+        AlertDialog alertIF = builderIf.create();
+        alertIF.show();
+    }
+
+    public static void rightBindMenu(Node parentNode)
+    {
+        final Node tempNode = parentNode;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+        builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                rightBuffer = null;
+                bindMode = true;
+                rBindMode = true;
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                tempBuffer = "";
+                AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                final TextView textView = new TextView(myContext);
+
+                textView.setHeight(50);
+
+                textView.setTextColor(Color.GREEN);
+                textView.setBackgroundColor(Color.BLACK);
+                builder.setView(textView)
+                        .setCancelable(false)
+                        .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                            @Override
+                            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                if (event.getAction() == KeyEvent.ACTION_UP) {
+                                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                                        rightBuffer = tempBuffer;
+
+                                        if(leftSet)
+                                        {
+                                            bindTriple();
+                                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                                            dialog.dismiss();
+                                            return true;
+                                        }
+
+                                        rightSet = true;
+
+                                        ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+                                        dialog.dismiss();
+
+                                        Activity thisAct = (Activity) myContext;
+                                        thisAct.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ifMenu();
+                                            }
+                                        });
+
+                                        return true;
+                                    } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                                        int bufLength = tempBuffer.length();
+
+                                        if (bufLength > 0) {
+                                            tempBuffer = tempBuffer.substring(0, bufLength - 1);
+
+                                            CharSequence tempTxt = textView.getText();
+                                            CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                            textView.setText(newTxt);
+                                        }
+
+                                        return true;
+                                    }
+
+                                    char tempChar = (char) event.getUnicodeChar();
+                                    textView.append(tempChar + "");
+                                    tempBuffer += tempChar;
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+                alert.show();
+
+                alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                dialog.dismiss();
+
+            }
+
+        });
+
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public static void leftBindMenu(Node parentNode)
+    {
+        final Node tempNode = parentNode;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+        builder.setPositiveButton("Node Value", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                leftBuffer = null;
+                bindMode = true;
+                lBindMode = true;
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Set Constant", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                tempBuffer = "";
+                AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                final TextView textView = new TextView(myContext);
+
+                textView.setHeight(50);
+
+                textView.setTextColor(Color.GREEN);
+                textView.setBackgroundColor(Color.BLACK);
+                builder.setView(textView)
+                        .setCancelable(false)
+                        .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                            @Override
+                            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                if (event.getAction() == KeyEvent.ACTION_UP) {
+                                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                                        leftBuffer = tempBuffer;
+
+                                        if(rightSet)
+                                        {
+                                            bindTriple();
+                                            ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                                            dialog.dismiss();
+                                            return true;
+                                        }
+
+                                        leftSet = true;
+
+                                        ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+                                        dialog.dismiss();
+
+                                        Activity thisAct = (Activity) myContext;
+                                        thisAct.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ifMenu();
+                                            }
+                                        });
+                                        return true;
+                                    } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                                        int bufLength = tempBuffer.length();
+
+                                        if (bufLength > 0) {
+                                            tempBuffer = tempBuffer.substring(0, bufLength - 1);
+
+                                            CharSequence tempTxt = textView.getText();
+                                            CharSequence newTxt = tempTxt.subSequence(0, tempTxt.length() - 1);
+                                            textView.setText(newTxt);
+                                        }
+
+                                        return true;
+                                    }
+
+                                    char tempChar = (char) event.getUnicodeChar();
+                                    textView.append(tempChar + "");
+                                    tempBuffer += tempChar;
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                alert.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+                alert.show();
+
+                alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                ((InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+                dialog.dismiss();
+
+            }
+
+        });
+
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+    //endregion
+
+    public static void bindTriple(){
+        if(leftNode != null)
+        {
+            if(rightNode != null)
+            {
+                BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftNode.getID(), curSpinVal, rightNode.getID());
+            }
+            else
+            {
+                boolean tempIsNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+                BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftNode.getID(), curSpinVal, rightBuffer, tempIsNum);
+            }
+        }
+        else if(rightNode != null)
+        {
+            boolean tempIsNum = leftBuffer.matches("-?\\d+(\\.\\d+)?");
+            BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftBuffer, tempIsNum, curSpinVal, rightNode.getID());
+        }
+        else
+        {
+            boolean tempLeftNum = leftBuffer.matches("-?\\d+(\\.\\d+)?");
+            boolean tempRightNum = rightBuffer.matches("-?\\d+(\\.\\d+)?");
+            BackendLogic.setBackendTrip(nodeWaitingBind.getID(), leftBuffer, tempLeftNum, curSpinVal, rightBuffer, tempRightNum);
+        }
+    }
 }

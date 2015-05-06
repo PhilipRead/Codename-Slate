@@ -1,5 +1,7 @@
 package com.example.zmotsing.myapplication.Nodes;
 
+import android.util.Log;
+
 import com.example.zmotsing.myapplication.CatmullRomType;
 import com.example.zmotsing.myapplication.Coord;
 import com.example.zmotsing.myapplication.LineStrip;
@@ -45,16 +47,13 @@ public class IfNode extends Node {
     @Override
     public void action(MyGLSurfaceView SV) {
         if(Tn.ArrayIndex >50) {
-            boolean ifResult = true;
+            boolean ifResult = SV.getIfValue(this.getID());
             if (ifResult) {
                 Tn.tLineStrip = truepath;
                 Tn.tNodeList = ifNodes;
                 Tn.ArrayIndex = 0;
             }
         }
-       //MyGLRenderer.Tn.stop();
-       //SV.getInput();
-        //surfaceview
     }
 
     public void translateNodes(float x, float y)

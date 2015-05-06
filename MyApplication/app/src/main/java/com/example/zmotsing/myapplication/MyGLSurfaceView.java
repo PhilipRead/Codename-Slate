@@ -104,7 +104,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
                             {
                                 textView.append("\n");
                                 ((InputMethodManager) mycontext.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                                BackendLogic.updateBackendNode(Tn.curNode.getID(), inputBuffer);
+
+                                boolean tempIsNum = inputBuffer.matches("-?\\d+(\\.\\d+)?");
+                                BackendLogic.updateBackendNode(Tn.curNode.getID(), inputBuffer, tempIsNum);
+
 
                                 Tn.start();
                                 return true;
@@ -240,11 +243,16 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
     public void getOutput(int nodeID) {
-        String curOutput = BackendLogic.printOutputNode(nodeID);
+        String curOutput = BackendLogic.getBackendVal(nodeID);
 
         textView.append(curOutput + "\n");
 
         Tn.start();
+    }
+
+    public boolean getIfValue(int nodeID) {
+        BackendLogic.calculateIf(nodeID);
+        return BackendLogic.getIfBool(nodeID);
     }
 
 

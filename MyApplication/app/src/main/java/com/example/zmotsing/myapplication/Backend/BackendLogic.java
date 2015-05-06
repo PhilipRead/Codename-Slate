@@ -27,11 +27,57 @@ public class BackendLogic
         return node;
     }
 
-    public static void updateBackendNode(int id, String text)
+    public static void updateBackendNode(int id, String text, boolean isNumber)
     {
         BackendNode node = findNode(id);
 
-        node.setValue(text);
+        node.setValue(text, isNumber);
+    }
+
+    public static void setBackendTrip(int parID, int leftID, String operator, int rightID)
+    {
+        TripleNode tempTrip = (TripleNode) findNode(parID);
+        BackendNode tempLeft = findNode(leftID);
+        BackendNode tempRight = findNode(rightID);
+
+        tempTrip.setLeftBind(tempLeft);
+        tempTrip.setRightBind(tempRight);
+        tempTrip.setOperator(operator);
+    }
+
+    public static void setBackendTrip(int parID, String leftConst, boolean isLeftNum, String operator, int rightID)
+    {
+        TripleNode tempTrip = (TripleNode) findNode(parID);
+        BackendNode tempRight = findNode(rightID);
+
+        tempTrip.setLeftConstant(leftConst, isLeftNum);
+        tempTrip.setRightBind(tempRight);
+        tempTrip.setOperator(operator);
+    }
+
+    public static void setBackendTrip(int parID, int leftID, String operator, String rightConst, boolean isRightNum)
+    {
+        TripleNode tempTrip = (TripleNode) findNode(parID);
+        BackendNode tempLeft = findNode(leftID);
+
+        tempTrip.setLeftBind(tempLeft);
+        tempTrip.setRightConstant(rightConst, isRightNum);
+        tempTrip.setOperator(operator);
+    }
+
+    public static void setBackendTrip(int parID, String leftConst, boolean isLeftNum, String operator, String rightConst, boolean isRightNum)
+    {
+        TripleNode tempTrip = (TripleNode) findNode(parID);
+
+        tempTrip.setLeftConstant(leftConst, isLeftNum);
+        tempTrip.setRightConstant(rightConst, isRightNum);
+        tempTrip.setOperator(operator);
+    }
+
+    public static String getBackendVal(int nodeID)
+    {
+        BackendNode node = findNode(nodeID);
+        return node.getValue();
     }
 
 //Input Methods
@@ -62,12 +108,6 @@ public class BackendLogic
         outNode.bind(childNode);
     }
 
-    public static String printOutputNode(int id)
-    {
-        OutputNode node = (OutputNode)findNode(id);
-        return node.getValue();
-    }
-
 //Storage Methods
     public static void initializeStorageNode(int id)
     {
@@ -79,5 +119,29 @@ public class BackendLogic
     {
         StorageNode node = new StorageNode(id, value, isNumber);
         logicNodes.add(node);
+    }
+
+//If Methods
+    public static void initializeIfNode(int id)
+    {
+        IfNode node = new IfNode(id);
+        logicNodes.add(node);
+    }
+
+    public static boolean calculateIf(int id)
+    {
+        IfNode tempIf = (IfNode) findNode(id);
+
+        return tempIf.computeValue();
+    }
+
+    public static boolean getIfBool(int id)
+    {
+        IfNode tempIf = (IfNode) findNode(id);
+
+        if(tempIf.getValue().equals("true"))
+            return true;
+        else
+            return false;
     }
 }

@@ -9,7 +9,7 @@ public class OutputNode extends BackendNode
 
     OutputNode(int id, String newValue)
     {
-        super(id, newValue);
+        super(id, newValue, false);
         boundNode = null;
         setBindable(false);
     }

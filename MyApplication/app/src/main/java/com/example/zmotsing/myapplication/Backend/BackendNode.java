@@ -9,6 +9,7 @@ public class BackendNode
     private int id;
     private String value;
     private boolean bindable;
+    private boolean hasNumericValue;
 
     BackendNode(int i)
     {
@@ -16,10 +17,11 @@ public class BackendNode
         value = null;
     }
 
-    BackendNode(int i, String newValue)
+    BackendNode(int i, String newValue, boolean isNumber)
     {
         id = i;
         value = newValue;
+        hasNumericValue = isNumber;
     }
 
     int getId()
@@ -27,9 +29,20 @@ public class BackendNode
         return id;
     }
 
-    void setValue(String newValue) { value = newValue; }
+    void setValue(String newValue, boolean isNumber)
+    {
+        value = newValue;
+        hasNumericValue = isNumber;
+    }
+
     String getValue() { return value; }
 
     void setBindable(boolean canBind) { bindable = canBind; }
+
     boolean getBindable() { return bindable; }
+
+    public boolean isNumeric()
+    {
+        return hasNumericValue;
+    }
 }
